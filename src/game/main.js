@@ -13,6 +13,21 @@ const config = {
     type: Phaser.AUTO,
     width: 1024,
     height: 768,
+    scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        // Minimum size
+        min: {
+            width: 800,
+            height: 600
+        },
+        // Maximum size
+        max: {
+            width: 1920,
+            height: 1080
+        },
+        zoom: 1,  // Size of game canvas = game size * zoom
+    },
     parent: 'game-container',
     backgroundColor: '#028af8',
     scene: [
