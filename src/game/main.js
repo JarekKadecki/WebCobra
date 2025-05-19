@@ -6,13 +6,13 @@ import Phaser from 'phaser';
 import { Preloader } from './scenes/Preloader';
 
 import { NextOpponent } from './scenes/NextOpponent';
+import { Snake } from './scenes/Snake';
 
-// Find out more information about the Game Config at:
-// https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
+
 const config = {
     type: Phaser.AUTO,
-    width: 1024,
-    height: 768,
+    width: 1280,
+    height: 720,
     scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
@@ -36,7 +36,8 @@ const config = {
         MainMenu,
         Game,
         GameOver,
-        NextOpponent
+        NextOpponent,
+        Snake
     ]
 };
 

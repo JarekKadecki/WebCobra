@@ -30,4 +30,10 @@ export class NextOpponent extends Scene
         EventBus.emit('current-scene-ready', this);
     }
 
+    readWindow(callback)
+    {
+        console.log("readWindow has been emitted");
+        callback({ x: this.scale.gameSize.width, y: this.scale.gameSize.height });
+    }
+
 }

@@ -1,16 +1,14 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import Phaser from 'phaser';
 import { PhaserGame } from './game/PhaserGame';
+import { EventBus } from './game/EventBus';
 
 function App ()
-{
-    // The sprite can only be moved in the MainMenu Scene
-    const [canMoveSprite, setCanMoveSprite] = useState(true);
-    
+{   
     //  References to the PhaserGame component (game and scene are exposed)
     const phaserRef = useRef();
-    const [spritePosition, setSpritePosition] = useState({ x: 0, y: 0 });
+    const [windowScale, setWindowScale] = useState({ x: 0, y: 0 });
 
     const changeScene = () => {
 
@@ -22,16 +20,17 @@ function App ()
         }
     }
 
-    const moveSprite = () => {
+    const readWindowScale = () => {
 
         const scene = phaserRef.current.scene;
+        alert('readWindowScale');
 
-        if (scene && scene.scene.key === 'MainMenu')
+        if (scene && scene.scene.key === 'NextOpponent')
         {
-            // Get the update logo position
-            scene.moveLogo(({ x, y }) => {
+            // GreadWindow from scene method
+            scene.readWindow(({ x, y }) => {
 
-                setSpritePosition({ x, y });
+                setWindowScale({ x, y });
 
             });
         }
@@ -66,27 +65,17 @@ function App ()
     // Event emitted from the PhaserGame component
     const currentScene = (scene) => {
 
-        setCanMoveSprite(scene.scene.key !== 'MainMenu');
+        // readWindowScale(scene.scene.key !== 'NextOpponent');
         
     }
+
+    useEffect(() => {
+        EventBus.on('resize', readWindowScale, false);
+    }, [])
 
     return (
         <div id="app">
             <PhaserGame ref={phaserRef} currentActiveScene={currentScene} />
-            <div>
-                <div>
-                    <button className="button" onClick={changeScene}>Change Scene</button>
-                </div>
-                <div>
-                    <button disabled={canMoveSprite} className="button" onClick={moveSprite}>Toggle Movement</button>
-                </div>
-                <div className="spritePosition">Sprite Position:
-                    <pre>{`{\n  x: ${spritePosition.x}\n  y: ${spritePosition.y}\n}`}</pre>
-                </div>
-                <div>
-                    <button className="button" onClick={addSprite}>Add New Sprite</button>
-                </div>
-            </div>
         </div>
     )
 }

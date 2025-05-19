@@ -33,7 +33,7 @@ export class MainMenu extends Scene
             this.logoTween = null;
         }
 
-        this.scene.start('NextOpponent');
+        this.scene.start('Snake');
     }
 
     moveLogo (reactCallback)
