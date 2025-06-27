@@ -1,0 +1,75 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table studies {
+  id integer [primary key]
+  name varchar
+  created_at timestamp
+  configuration varchar2
+}
+
+Table users {
+  id integer [primary key]
+  email varchar
+  created_at timestamp
+}
+
+Table participations {
+  id integer [primary key]
+  user_id integer
+  study_id integer
+  hash varchar [unique]
+  finished boolean
+  answers varchar2
+  date timestamp
+}
+
+Ref user_participations: participations.user_id > users.id
+
+Ref studies_participations: participations.study_id > studies.id
+
+#study_admin a41b09a8d0c4
+
+psql -U study_admin -d study_db;
+sea-orm-cli generate entity -u postgres://study_admin:a41b09a8d0c4@localhost:5432/study_db -o src/models
+
+
+\du         - list users
+\l          - list databases
+\dt         - list tables
+\d table    - describes table
+\c database - switch to database
+
+CREATE DATABASE study_db;
+
+CREATE TABLE studies (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR,
+    created_at TIMESTAMP,
+    configuration TEXT
+);
+
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR,
+    created_at TIMESTAMP
+);
+
+CREATE TABLE participations (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id),
+    study_id INTEGER REFERENCES studies(id),
+    hash VARCHAR UNIQUE,
+    finished BOOLEAN,
+    answers TEXT,
+    date TIMESTAMP
+);
+
+
+Opponent.rank 100 : score 12
+win                                     
+Player.rank 46 : player.score           
+->
+Opponent rank player.rank/2 : score player.score + applesCount + 3
+win                                       lose
+Player rank 20  : player.score ...        player.score+ ? player.rank-=11 : player.rank
