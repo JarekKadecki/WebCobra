@@ -18,12 +18,14 @@ export class NextOpponent extends Scene
 
         this.add.image(this.scale.width*0.5, this.scale.height*0.5, sceneData.opponentImage);
         
-        const topText = SimpleText(this, this.scale.width*0.5, 100, sceneData.topText + ` rank ${data.opponentPosition}`)
+        const topText = SimpleText(this, this.scale.width*0.5, 100, sceneData.topText + ` rank ${data.opponentPosition}, score ${data.opponentScore}`)
             .setOrigin();
         const bottomText = SimpleText(this, this.scale.width*0.5, 650, sceneData.bottomText
             ,{fontSize: 38}).setOrigin();
 
         EventBus.emit('current-scene-ready', this);
+
+        console.log(JSON.stringify(data));
 
         this.time.delayedCall(5000, () => {
             this.scene.start('TakeApples', data);

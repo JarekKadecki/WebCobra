@@ -67,6 +67,17 @@ export class Preloader extends Scene
     create ()
     {
         const data = {
+            gameRounds: 2,
+            currentRound: 0,
+            opponentPosition: 92, //46 !6-> 40 --> 20 !6->14 --> 7 !6-> 1
+            opponentScore: 20,
+            opponentScoreUpgrade: 15,
+            playerStartPosition: 112,
+            applesCount: 12,
+            boostPrice: 5,
+            rankBoostFactorAfterWin: 0.5,
+            rankBoostFactorAfterLoose: 0.9,
+            scoreTableSize: 15,
             scenesData: {
                 NextOpponent: {
                     opponentImage: 'anon0',
@@ -97,24 +108,14 @@ export class Preloader extends Scene
                     topRightText: 'Scoreboard',
                     bottomRightText: 'Proceed',
                 }
-            },
-            gameRounds: 2,
-            currentRound: 0,
-            roundApplesSteal: [],
-            roundScore: [],
-            roundOutcome: [],
-            roundBoost: [],
-            opponentPosition: 92, //46 !6-> 40 --> 20 !6->14 --> 7 !6-> 1
-            opponentScore: 20,
-            opponentScoreUpgrade: 15,
-            playerStartPosition: 112,
-            playerPosition: [],
-            applesCount: 12,
-            boostPrice: 5,
-            rankBoostFactorAfterWin: 0.5,
-            rankBoostFactorAfterLoose: 0.9,
-            scoreTableSize: 15
+            }
         }
+
+        data.roundApplesSteal   = [];
+        data.roundScore         = [];
+        data.roundOutcome       = [];
+        data.roundBoost         = [];
+        data.playerPosition     = [];
 
         this.scene.start('NextOpponent', data);
     }

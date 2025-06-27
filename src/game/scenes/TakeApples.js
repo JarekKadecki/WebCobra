@@ -21,6 +21,8 @@ export class TakeApples extends Scene
         if(!("applesCount" in data)) data.applesCount = this.applesCount;
         else this.applesCount = data.applesCount;
 
+        this.applesStolen = 0;
+
         const sceneData = data.scenesData.TakeApples;
 
         const titleLabel = SimpleText(this, 175, -120, sceneData.topText).setOrigin(0.5);

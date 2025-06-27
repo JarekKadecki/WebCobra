@@ -59,6 +59,7 @@ export class FirstBoost extends Scene {
         const nextButton = Button(this, 0, 0, 'next',
             () => {
                 data.roundBoost[data.currentRound] = this.purchasedBoost;
+                data.playerPosition[data.currentRound] = this.currentPlayerPosition;
                 
                 data = setNextEnemy(data);
                 data = setNextRound(data);

@@ -9,7 +9,6 @@ export class Snake extends Scene
 {
     gridDimetions = {x: 32, y: 18};
     cellSize = 40*0.7;
-    player = null;
     snakeGame = null;
     gameField = null;
     gameFieldLabel = null;
@@ -43,7 +42,7 @@ export class Snake extends Scene
         const upperOpponentText = SimpleText(this, 0, -300, sceneData.topOpponentText)
             .setOrigin(0.5);
 
-        const lowerOpponentText = SimpleText(this, 0, 300, sceneData.bottomOpponentText + `, rank ${data.opponentPosition}`,
+        const lowerOpponentText = SimpleText(this, 0, 300, sceneData.bottomOpponentText + ` rank ${data.opponentPosition}, score ${data.opponentScore}`,
             {fontSize: 38}).setOrigin(0.5);
 
         const applePanel = drawApples(this, data.applesCount, applesStolen, 1, 50);
@@ -78,6 +77,9 @@ export class Snake extends Scene
             this.scoreLabel.setText(`Score: ${this.snakeGame.score}`);
         }
 
+        this.input.enabled = true;
+        this.input.keyboard.on('keydown-P', () => this.endGame(data.opponentScore + 1), this);
+
         EventBus.emit('current-scene-ready', this);
     }
 
@@ -110,16 +112,10 @@ export class Snake extends Scene
         }
         else if(this.gameOver === true)
         {
-            this.gameFieldLabel.setVisible(true);
-            this.gameFieldLabel.setText("Game Over");
-            this.children.bringToTop(this.gameFieldLabel);
-
-            this.data.roundScore[this.data.currentRound] = this.snakeGame.score;
-
-            this.time.delayedCall(2000, () => {
-                this.scene.start("Outcome", this.data);
-            });
-            
+            this.gameOver = false;
+            this.timer = 0;
+            this.gamePaused = true;
+            this.endGame();
         }
         else
         {
@@ -149,6 +145,24 @@ export class Snake extends Scene
             }
         }
 
+    }
+
+    endGame(n)
+    {
+        if(n !== undefined)
+        {
+            this.snakeGame.score = n;
+        }
+
+        this.gameFieldLabel.setVisible(true);
+        this.gameFieldLabel.setText("Game Over");
+        this.children.bringToTop(this.gameFieldLabel);
+
+        this.data.roundScore[this.data.currentRound] = this.snakeGame.score;
+
+        this.time.delayedCall(2000, () => {
+            this.scene.start("Outcome", this.data);
+        });
     }
 
 

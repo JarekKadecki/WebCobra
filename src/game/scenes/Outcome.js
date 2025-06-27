@@ -16,7 +16,7 @@ export class Outcome extends Scene
         const sceneData = data.scenesData.Outcome;
 
         // if(data.applesStolen == undefined) data = {applesStolen: 3, applesCount: 4};
-        const balance = data.roundApplesSteal[data.currentRound]/data.applesCount;
+        const balance = data.roundScore[data.currentRound]/data.opponentScore;
 
         const youImage = this.add.image(0, 0, sceneData.playerImage).setScale(0.5);
 
