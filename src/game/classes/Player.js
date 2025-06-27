@@ -1,33 +1,31 @@
+import { Scene } from "phaser";
 
 class Segment {
     x = -1;
     y = -1;
     prev = null;
     next = null;
-    added = false;
+    triangle = null;
 
-    constructor (x=-1, y=-1, prev=null, next=null)
+    constructor (x=-1, y=-1, prev=null, next=null, scene=null)
     {
         this.x = x;
         this.y = y;
         this.prev = prev;
         this.next = next;
+        this.triangle = new Phaser.GameObjects.Triangle(scene, x, y).setActive(false);
     }
 
     setPos(x, y)
     {
         this.x = x;
         this.y = y;
+        this.triangle.setPos(x, y);
     }
 
     getPos()
     {
         return {x: this.x, y: this.y};
-    }
-
-    add()
-    {
-            this.added = true;
     }
 
     setPrev(prev)
@@ -52,27 +50,29 @@ export class Player {
     body = [];
     mapSize = {x: 0, y: 0};
     direction = Direction.Right;
+    scene = null;
     
-    constructor(x, y, mapWidth, mapHeight)
+    constructor(x, y, mapWidth, mapHeight, scene)
     {
-        this.body.push(new Segment(x, y));
+        this.scene = scene;
+        this.body.push(new Segment(x, y, scene));
         this.mapSize = {mapWidth, mapHeight};
 
     }
 
     //move head according to current direction
     //set pos of each segment to pos of prev
-    //add segments added with grow
+    //activate segments added with grow
     moveBody()
     {
         this.body.forEach( (segment) => {
-            if(segment.prev != null && segment.added == true)
+            if(segment.prev != null && segment.triangle.active == true)
             {
                 segment.setPos(segment.prev.x, segment.prev.y);
             }
-            else if(segment.added == false)
+            else if(segment.triangle.active == false)
             {
-                segment.added = true;
+                segment.triangle.setActive(true);
             }
         })
 
@@ -97,7 +97,7 @@ export class Player {
     grow()
     {
         var lastSegment = this.body[this.body.length-1];
-        var newSegment = new Segment(lastSegment.getPos().x, lastSegment.getPos().y, prev = lastSegment);
+        var newSegment = new Segment(lastSegment.getPos().x, lastSegment.getPos().y, prev = lastSegment, scene = this.scene);
         lastSegment.setNext(newSegment);
         this.body.push(newSegment);
     }
@@ -110,7 +110,8 @@ export class Player {
         for(let i = 0; i<(copyBody.length-1); i++)
         {
             if(copyBody[i].getPos().x == copyBody[i+1].getPos().x && 
-            copyBody[i].getPos().y == copyBody[i+1].getPos().y) 
+               copyBody[i].getPos().y == copyBody[i+1].getPos().y &&
+               copyBody[i+1].added == true) 
             {
                 collision = true;
             }

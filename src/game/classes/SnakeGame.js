@@ -1,97 +1,217 @@
-import { Player } from "./Player";
+import { mod, randomInt } from "../functions/tools";
 
-class VectorSet {
-    set = new Set();
-    shift = 100;
-
-    constructor(shift=100)
-    {
-        this.shift = shift;
-    }
-
-    add(value)
-    {
-        if(Number.isInteger(value))
-        {
-            this.set.add(value);
-        }
-        else if(Object.hasOwn(value, 'x') && Object.hasOwn(value, 'y'))
-        {
-            this.set.add(Math.floor(Number(value.x))*this.shift + Math.floor(Number(value.y)));
-        }
-    }
-
-    delete(value)
-    {
-        if(Number.isInteger(value))
-        {
-            this.set.delete(value);
-        }
-        else if(Object.hasOwn(value, 'x') && Object.hasOwn(value, 'y'))
-        {
-            this.set.delete(Math.floor(Number(value.x))*this.shift + Math.floor(Number(value.y)));
-        }
-    }
-
-    getSize()
-    {
-        return this.set.size;
-    }
-}
+const Direction = {
+    Up: 'Up',
+    Down: 'Down',
+    Left: 'Left',
+    Right: 'Right'
+  }
 
 export class SnakeGame {
-    player = null;
-    apples = new VectorSet();
+    player = [];
+    apples = [];
     score = 0;
-    frameTime = 1;
+    frameTime = 1000;
     gridSize = {x: 0, y: 0};
-    posToNumberShift = 100;
+    scene = null;
+    gameContainer = null;
+    cellSize = 40;
+    direction = Direction.Up;
+    grow = false;
+    appleColor = 0xf00000;
+    playerColor = 0xa0f000;
 
-    constructor(player, frameTime=1, gridWidth, gridHeight)
+    constructor(scene, gameContainer, frameTime=1000, gridWidth, gridHeight, cellSize)
     {
-        this.player = player;
+        this.scene = scene;
         this.frameTime = frameTime;
-        this.gridSize = {x: gridWidth, y: gridHeight};
-        this.posToNumberShift = 10 ** String(this.gridSize.y).length;
-        this.apples = new VectorSet(this.posToNumberShift);
+        this.gridSize.x = gridWidth;
+        this.gridSize.y = gridHeight;
+        this.cellSize = cellSize;
+        this.gameContainer = gameContainer;
     }
 
-    vectorToNumber(value)
+    spawnPlayer()
     {
-        if(Object.hasOwn(value, 'x') && Object.hasOwn(value, 'y'))
-        {
-            return Math.floor(Number(value.x))*this.posToNumberShift + Math.floor(Number(value.y));
-        }
-        else
-        {
-            console.error("Invalid vector passed to SnakeGame::vectorToNumber");
-        }
-        return 0;
+        const randCell = this.randUnoccupiedCell();
+        this.addRect(this.player, randCell.x, randCell.y);
     }
 
     spawnApples(number)
     {
-        var playerCoordsToNumbers = [];
-        if(this.player instanceof Player){
-            this.player.body.forEach(element => {
-                playerCoordsToNumbers.add(this.vectorToNumber(element.getPos()));
-            });
-        }
-        else
+        for(let i=0; i<number; i++)
         {
-            console.error("Invalid Player instance passed to SnakeGame::spawnApples");
+            const freeCell = this.randUnoccupiedCell()
+            this.addRect(this.apples, freeCell.x, freeCell.y);
+        }
+    }
+
+    randGridCell()
+    {
+        const randX = randomInt(0, this.gridSize.x);
+        const randY = randomInt(0, this.gridSize.y);
+
+        return {x: randX, y: randY};
+    }
+
+    randUnoccupiedCell()
+    {
+        if(this.apples.length + this.player.length >= this.gridSize.x*this.gridSize.y) 
+            return null;
+
+        var uniquePos = false;
+     
+        while(uniquePos == false)
+        {
+            uniquePos = true;
+            const randCell = this.randGridCell();
+            for(let segment of this.player)
+            {
+                if(segment.x == randCell.x && segment.y == randCell.y)
+                    uniquePos = false;
+            }
+            
+            for(let segment of this.apples)
+            {
+                if(segment.x == randCell.x && segment.y == randCell.y)
+                    uniquePos = false;
+            }
+
+            if(uniquePos == true) return randCell;
+        }
+    }
+
+    setDirection(direction)
+    {
+        if(this.player.length == 1)
+        {
+            this.direction = direction;
+        }
+        else if((direction == Direction.Up && this.direction != Direction.Down) ||
+                (direction == Direction.Down && this.direction != Direction.Up) ||
+                (direction == Direction.Right && this.direction != Direction.Left) ||
+                (direction == Direction.Left && this.direction != Direction.Right))
+        {
+            this.direction = direction;
+        }
+    }
+
+    getRect(x, y, color)
+    {
+        const rect = this.scene.add.rectangle(x*this.cellSize, y*this.cellSize,
+            this.cellSize, this.cellSize, color).setOrigin(0, 0);
+        const res = {
+            rectangle: rect,
+            x: x,
+            y: y
+        };
+
+        return res;
+    }
+
+    addRect(tab, x, y)
+    {
+        var color = this.appleColor;
+        if(tab == this.player) color = this.playerColor;
+        const res = this.getRect(x, y, color);
+        tab.push(res);
+        this.gameContainer.add(res.rectangle);
+
+        return res;
+    }
+
+    movePlayer()
+    {
+        const head = this.player[0];
+
+        if(this.grow == true)
+        {
+            // console.log("Growing");
+            this.grow = false;
+            const tail = this.player.at(-1);
+            this.addRect(this.player, tail.x, tail.y);
         }
 
-        var newApplesCoords = [];
-        while(newApplesCoords.length < number)
+        var newHead = this.player.pop();
+
+        switch(this.direction)
         {
-            var tempCoord = Math.floor(Math.random() * (this.gridSize.x*this.posToNumberShift + this.gridSize.y));
-            if (!playerCoordsToNumbers.includes(tempCoord)) 
+            case Direction.Up: 
+                newHead.x = head.x;
+                newHead.y = head.y-1;
+                break;
+            case Direction.Down:
+                newHead.x = head.x;
+                newHead.y = head.y+1;
+                break;
+            case Direction.Right:
+                newHead.x = head.x+1;
+                newHead.y = head.y;
+                break;
+            case Direction.Left:
+                newHead.x = head.x-1;
+                newHead.y = head.y;
+                break;
+            default: break;
+        }
+
+        newHead.x = mod(newHead.x, this.gridSize.x);
+        newHead.y = mod(newHead.y, this.gridSize.y);
+
+        newHead.rectangle.setPosition(newHead.x*this.cellSize, newHead.y*this.cellSize);
+        this.gameContainer.add(newHead.rectangle);
+
+        this.player.splice(0, 0, newHead);
+
+        // console.log(`x: ${newHead.x} y: ${newHead.y}`)
+        // this.player.forEach((x) => {console.log(`Player: x:${x.x} y:${x.y}`)});
+        // console.log('\n');
+    }
+
+    checkPlayerCollision()
+    {
+        for(let i=0 ;i<this.player.length; i++)
+            for(let j=0; j<this.player.length; j++)
+        {
+            if(i !== j)
             {
-                newApplesCoords.add(tempCoord);
+                if(this.player[i].x == this.player[j].x &&
+                    this.player[i].y == this.player[j].y)
+                    return true;
             }
         }
 
-        newApplesCoords.forEach(coord => this.apples.add(coord));
+        return false;
     }
+
+    checkAppleCollision()
+    {
+        for(let i=0; i<this.apples.length; i++)
+            for(let segment of this.player)
+                if(this.apples[i].x == segment.x && this.apples[i].y == segment.y)
+                    {
+                        // console.log(this.apples)
+                        // console.log(`PlayerHead at ${this.player[0].x} ${this.player[0].y}`);
+                        // console.log(`apple at ${this.apples[i].x} ${this.apples[i].y}`);
+                        // console.log();
+                        return i;
+                    }
+
+        return false;
+    }
+
+    removeApple(i)
+    {
+        if(i>=0 && i<this.apples.length)
+        {
+            this.apples[i].rectangle.setVisible(false).setActive(false);
+            this.apples.splice(i, 1);
+        }
+    }
+
+    speedUp()
+    {
+        this.frameTime *= 0.9;
+    }
+
 }

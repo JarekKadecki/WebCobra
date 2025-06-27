@@ -1,63 +1,156 @@
 import { EventBus } from '../EventBus';
 import { Scene } from 'phaser';
-import { Player } from '../classes/Player';
 import { SnakeGame } from '../classes/SnakeGame';
+import { drawApples } from '../functions/draw';
+import { SimpleText } from '../functions/components';
 
 
 export class Snake extends Scene
 {
     gridDimetions = {x: 32, y: 18};
-    cellSize = {x: gameSize.x/gridDimetions.x, y: gameSize.y/gridDimetions.y};
+    cellSize = 40*0.7;
     player = null;
     snakeGame = null;
+    gameField = null;
+    gameFieldLabel = null;
+    scoreLabel = null;
+    cursors = null;
+    gamePaused = true;
+    gameOver = false;
+    timer = 0;
+    updatedDirection = false;
+    data = null;
+    gameContainer = null;
+
 
     constructor ()
     {
         super('Snake');
     }
 
-    create()
+    create(data)
     {
         this.cameras.main.setBackgroundColor(0x000000);
         const gameSize = {x: this.sys.game.config.width, y: this.sys.game.config.height};
+        const sceneData = data.scenesData.Snake;
+        this.data = data;
+        const applesStolen = data.roundApplesSteal[data.currentRound] ?? 0;
 
         //setting oponent info panel
-        const opponentImage = this.add.image(gameSize.x*0.5, gameSize.y*0.5, 'anonymous10')
-        .setOrigin(0.5);
+        const opponentImage = this.add.image(0, 0, sceneData.opponentImage)
+            .setOrigin(0.5);
 
-        const upperOpponentText = this.add.text(gameSize.x*0.5, gameSize.y*0.125, 'Your opponent', {
-            fontFamily: 'Arial Black', fontSize: 28, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 3,
-            align: 'center'
-        }).setOrigin(0.5);
+        const upperOpponentText = SimpleText(this, 0, -300, sceneData.topOpponentText)
+            .setOrigin(0.5);
 
-        const lowerOpponentText = this.add.text(gameSize.x*0.5, gameSize.y*0.875, 'LEE, rank 92', {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 3,
-            align: 'center'
-        }).setOrigin(0.5);
+        const lowerOpponentText = SimpleText(this, 0, 300, sceneData.bottomOpponentText + `, rank ${data.opponentPosition}`,
+            {fontSize: 38}).setOrigin(0.5);
 
-        const opponentInfoContainer = this.add.container(0, 0, [opponentImage, upperOpponentText, lowerOpponentText]);
+        const applePanel = drawApples(this, data.applesCount, applesStolen, 1, 50);
+        
+        const appleContainer = this.add.container(-150,500, applePanel);
+        const opponentInfoContainer = this.add.container(0, 0, [opponentImage, upperOpponentText, lowerOpponentText, appleContainer]);
         opponentInfoContainer.setScale(0.5, 0.5);
-        opponentInfoContainer.setPosition(gameSize.x*0.6, gameSize.y*0.05);
-
-        // setting playground
-        const gameGrid = this.add.rectangle(0, gameSize.y*0.15, gameSize.x*0.7, gameSize.y*0.7, 0x505050).setOrigin(0);
-
-        // setting up player
-        this.player = new Player(0, 0, this.gridDimetions.x, this.gridDimetions.y);
+        opponentInfoContainer.setPosition(gameSize.x*0.9, gameSize.y*0.3);
+        
+        //setting playground
+        this.gameField = this.add.rectangle(0, 0, 
+            this.cellSize*this.gridDimetions.x, this.cellSize*this.gridDimetions.y, 0x505050).setOrigin(0);
+            
+        this.gameFieldLabel = SimpleText(this, this.gameField.width/2, this.gameField.height/2,
+            sceneData.gameFieldText, {fontSize: 38}).setOrigin(0.5);        
+                        
+        this.scoreLabel = SimpleText(this, this.gameField.width/2, -20,
+            sceneData.scoreText, {fontSize: 30}).setOrigin(0.5);
+            
+        console.log(`${data.applesCount} ${applesStolen}`);
+        this.gameContainer = this.add.container(0, gameSize.y*0.15, [this.gameField, this.gameFieldLabel, this.scoreLabel]);
+            
+        //setting up keyboard input handling
+        this.cursors = this.input.keyboard.createCursorKeys();
 
         // setting up snake game
-        this.snakeGame = new SnakeGame(this.player, 0.5, this.gridDimetions.x, this.gridDimetions.y)
+        this.snakeGame = new SnakeGame(this, this.gameContainer, 500, this.gridDimetions.x, this.gridDimetions.y, this.cellSize);
         
+        if( applesStolen > 0)
+        {
+            this.snakeGame.score = applesStolen;
+            this.scoreLabel.setText(`Score: ${this.snakeGame.score}`);
+        }
 
         EventBus.emit('current-scene-ready', this);
     }
 
-    update()
+    update(time, delta)
     {
+        
+        if(this.cursors.up.isDown) {
+            this.snakeGame.setDirection('Up');
+            this.updatedDirection = true;
+        } else if(this.cursors.down.isDown) {
+            this.snakeGame.setDirection('Down');
+            this.updatedDirection = true;
+        } else if(this.cursors.left.isDown) {
+            this.snakeGame.setDirection('Left');
+            this.updatedDirection = true;
+        } else if(this.cursors.right.isDown) {
+            this.snakeGame.setDirection('Right');
+            this.updatedDirection = true;
+        }
+
+        if(this.gamePaused)
+        {
+            if(this.cursors.up.isDown)
+            {
+                this.gamePaused = false;
+                this.gameFieldLabel.setVisible(false);
+                this.snakeGame.spawnPlayer()
+                this.snakeGame.spawnApples(2);
+            }
+        }
+        else if(this.gameOver === true)
+        {
+            this.gameFieldLabel.setVisible(true);
+            this.gameFieldLabel.setText("Game Over");
+            this.children.bringToTop(this.gameFieldLabel);
+
+            this.data.roundScore[this.data.currentRound] = this.snakeGame.score;
+
+            this.time.delayedCall(2000, () => {
+                this.scene.start("Outcome", this.data);
+            });
+            
+        }
+        else
+        {
+            this.timer += delta;
+            if(this.timer >= this.snakeGame.frameTime)
+            {
+                this.timer = 0;
+                this.snakeGame.movePlayer();
+                const eatenApple = this.snakeGame.checkAppleCollision();
+                if(eatenApple !== false)
+                {
+                    //update score
+                    this.snakeGame.speedUp();
+                    this.snakeGame.removeApple(eatenApple);
+                    this.snakeGame.grow = true;
+                    this.snakeGame.score += 1;
+                    this.scoreLabel.setText(`Score: ${this.snakeGame.score}`);
+                    this.snakeGame.spawnApples(1);
+                }
+                
+                if(this.snakeGame.checkPlayerCollision() == true)
+                {
+                    this.gameOver = true;
+                }
+
+                this.updatedDirection = false;
+            }
+        }
 
     }
 
 
 }
+

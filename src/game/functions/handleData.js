@@ -1,0 +1,35 @@
+export function setNextEnemy(data)
+{
+    const currentRound = data.currentRound ? data.currentRound + 1 : 1;
+
+    var newData = data;
+
+    if(data.roundOutcome[data.currentRound] == 1 ||
+        data.roundScore[data.currentRound] >= data.opponentScore)
+    {
+        const newOpponentImage = 'anon' + currentRound.toString();
+        newData.scenesData.NextOpponent.opponentImage = newOpponentImage;
+        newData.scenesData.Snake.opponentImage = newOpponentImage;
+        newData.scenesData.Outcome.opponentImage = newOpponentImage;
+
+        const newOpponentScore =  data.roundScore[data.currentRound] + 
+                                data.opponentScoreUpgrade;
+        newData.opponentScore = newOpponentScore;
+
+        const newOpponentPosition = data.playerPosition[data.currentRound] ?? data.playerStartPosition;
+        newData.opponentPosition = Math.ceil(newOpponentPosition*data.rankBoostFactorAfterWin);
+
+    }
+
+    return newData;
+}
+
+export function setNextRound(data)
+{
+    var newData = data;
+    const newRound = data.currentRound ? data.currentRound + 1 : 0;
+    newData.currentRound = newRound;
+
+    if(newRound > data.gameRounds) return data;
+    else return newData;
+}

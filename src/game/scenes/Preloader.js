@@ -1,4 +1,5 @@
 import { Scene } from 'phaser';
+import { Outcome } from './Outcome';
 
 export class Preloader extends Scene
 {
@@ -29,21 +30,92 @@ export class Preloader extends Scene
 
     preload ()
     {
-        //  Load the assets for the game - Replace with your own assets
+        //  Load the assets for the game
         this.load.setPath('assets');
 
         this.load.image('logo', 'logo.png');
         this.load.image('star', 'star.png');
 
-        this.load.image('anonymous10', 'anonymous10.png');
+        this.load.image('anon0', 'anon0.png');
+        this.load.image('anon1', 'anon1.png');
+        this.load.image('anon2', 'anon2.png');
+        this.load.image('anon3', 'anon3.png');
+        this.load.image('anon4', 'anon4.png');
+        this.load.image('anon5', 'anon5.png');
+        this.load.image('anon6', 'anon6.png');
+        this.load.image('anon7', 'anon7.png');
+        this.load.image('anon8', 'anon8.png');
+        this.load.image('anon9', 'anon9.png');
+        this.load.image('anon10', 'anon10.png');
+        this.load.image('anon11', 'anon11.png');
+        this.load.image('anon12', 'anon12.png');
+        this.load.image('anon13', 'anon13.png');
+        
+
+        this.load.image('apple', 'apple.png')
+        this.load.image('appleX', 'appleX.png');
+        this.load.image('add', 'add.png');
+        this.load.image('sub', 'sub.png');
+        this.load.image('next', 'next.png');
+        this.load.image('you', 'you.png');
+        this.load.image('crown', 'crown.png');
+        this.load.image('boostUp', 'boostUp.png');
+        this.load.image('boostDown', 'boostDown.png');
+        this.load.image('boost','boost.png');
     }
 
     create ()
     {
-        //  When all the assets have loaded, it's often worth creating global objects here that the rest of the game can use.
-        //  For example, you can define global animations here, so we can use them in other scenes.
+        const data = {
+            scenesData: {
+                NextOpponent: {
+                    opponentImage: 'anon0',
+                    topText: 'Next opponent:',
+                    bottomText: 'Opponent'
+                },
+                TakeApples: {
+                    topText: 'Taking away 0 apples from opponent.',
+                    leftText: 'Take apples\nfrom you opponent:',
+                    rightText: 'Proceed'
+                },
+                Snake: {
+                    opponentImage: 'anon0',
+                    topOpponentText: 'Your opponent',
+                    bottomOpponentText: 'Opponent',
+                    gameFieldText: 'Press UP to start',
+                    scoreText: 'Score: 0'
+                },
+                Outcome: {
+                    playerImage: 'you',
+                    opponentImage: 'anon0',
+                    leftText: 'You',
+                    rightText: 'Lee'
+                },
+                FirstBoost: {
+                    topLeftText: 'Buy booster',
+                    bottomLeftText: 'Rank up for 5 pln per boost',
+                    topRightText: 'Scoreboard',
+                    bottomRightText: 'Proceed',
+                }
+            },
+            gameRounds: 2,
+            currentRound: 0,
+            roundApplesSteal: [],
+            roundScore: [],
+            roundOutcome: [],
+            roundBoost: [],
+            opponentPosition: 92, //46 !6-> 40 --> 20 !6->14 --> 7 !6-> 1
+            opponentScore: 20,
+            opponentScoreUpgrade: 15,
+            playerStartPosition: 112,
+            playerPosition: [],
+            applesCount: 12,
+            boostPrice: 5,
+            rankBoostFactorAfterWin: 0.5,
+            rankBoostFactorAfterLoose: 0.9,
+            scoreTableSize: 15
+        }
 
-        //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
-        this.scene.start('Snake');
+        this.scene.start('NextOpponent', data);
     }
 }

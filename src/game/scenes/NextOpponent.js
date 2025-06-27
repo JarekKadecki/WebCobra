@@ -1,5 +1,6 @@
 import { EventBus } from '../EventBus';
 import { Scene } from 'phaser';
+import { SimpleText } from '../functions/components';
 
 
 export class NextOpponent extends Scene
@@ -9,31 +10,24 @@ export class NextOpponent extends Scene
         super('NextOpponent');
     }
 
-    create()
+    create(data)
     {
         this.cameras.main.setBackgroundColor(0x000000);
 
-        this.add.image(512, 384, 'anonymous10');
+        const sceneData = data.scenesData.NextOpponent;
 
-        this.add.text(512, 100, 'Next opponent:', {
-            fontFamily: 'Arial Black', fontSize: 28, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 3,
-            align: 'center'
-        }).setOrigin();
-
-        this.add.text(512, 700, 'LEE, rank 92', {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 3,
-            align: 'center'
-        }).setOrigin();
+        this.add.image(this.scale.width*0.5, this.scale.height*0.5, sceneData.opponentImage);
+        
+        const topText = SimpleText(this, this.scale.width*0.5, 100, sceneData.topText + ` rank ${data.opponentPosition}`)
+            .setOrigin();
+        const bottomText = SimpleText(this, this.scale.width*0.5, 650, sceneData.bottomText
+            ,{fontSize: 38}).setOrigin();
 
         EventBus.emit('current-scene-ready', this);
-    }
 
-    readWindow(callback)
-    {
-        console.log("readWindow has been emitted");
-        callback({ x: this.scale.gameSize.width, y: this.scale.gameSize.height });
+        this.time.delayedCall(5000, () => {
+            this.scene.start('TakeApples', data);
+        });
     }
 
 }
