@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Validate</title>
+</head>
+<body>
+    <h1>Enter Secret key</h1>
+    <form id="validationForm">
+        <input type="key" id="key" placeholder="key" required />
+        <button type="submit">Submit</button>
+    </form>
+    <p id="error"></p>
+
+    <script>
+        document.getElementById('validationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const key = document.getElementById('key').value;
+
+            const response = await fetch('/api/validate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ key })
+            });
+
+            if (response.ok) {
+                window.location.href = '/game';
+            } else {
+                document.getElementById('error').innerText = 'Incorrect key.';
+            }
+        });
+    </script>
+</body>
+</html>
