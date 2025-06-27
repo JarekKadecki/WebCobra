@@ -20,22 +20,6 @@ function App ()
         }
     }
 
-    const readWindowScale = () => {
-
-        const scene = phaserRef.current.scene;
-        alert('readWindowScale');
-
-        if (scene && scene.scene.key === 'NextOpponent')
-        {
-            // GreadWindow from scene method
-            scene.readWindow(({ x, y }) => {
-
-                setWindowScale({ x, y });
-
-            });
-        }
-    }
-
     const addSprite = () => {
 
         const scene = phaserRef.current.scene;
@@ -68,10 +52,6 @@ function App ()
         // readWindowScale(scene.scene.key !== 'NextOpponent');
         
     }
-
-    useEffect(() => {
-        EventBus.on('resize', readWindowScale, false);
-    }, [])
 
     return (
         <div id="app">

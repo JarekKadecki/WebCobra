@@ -1,15 +1,12 @@
 import { Boot } from './scenes/Boot';
-import { Game } from './scenes/Game';
-import { GameOver } from './scenes/GameOver';
-import { MainMenu } from './scenes/MainMenu';
-import Phaser from 'phaser';
-import { Preloader } from './scenes/Preloader';
-
+import { FirstBoost } from './scenes/FirstBoost';
 import { NextOpponent } from './scenes/NextOpponent';
+import { Outcome } from './scenes/Outcome';
+import { Preloader } from './scenes/Preloader';
 import { Snake } from './scenes/Snake';
+import { TakeApples } from './scenes/TakeApples';
 
-
-const config = {
+export const config = {
     type: Phaser.AUTO,
     width: 1280,
     height: 720,
@@ -26,20 +23,25 @@ const config = {
             width: 1920,
             height: 1080
         },
-        zoom: 1,  // Size of game canvas = game size * zoom
+        zoom: 1,
+    },
+    physics: {
+        default: 'arcade',
     },
     parent: 'game-container',
     backgroundColor: '#028af8',
     scene: [
         Boot,
         Preloader,
-        MainMenu,
-        Game,
-        GameOver,
         NextOpponent,
-        Snake
+        Snake,
+        TakeApples,
+        Outcome,
+        FirstBoost
     ]
 };
+
+
 
 const StartGame = (parent) => {
 
