@@ -67,7 +67,7 @@ export class Preloader extends Scene
     create ()
     {
         const data = {
-            gameRounds: 2,
+            gameRounds: 3,
             currentRound: 0,
             opponentPosition: 92, //46 !6-> 40 --> 20 !6->14 --> 7 !6-> 1
             opponentScore: 20,

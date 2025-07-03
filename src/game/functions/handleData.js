@@ -1,6 +1,6 @@
 export function setNextEnemy(data)
 {
-    const currentRound = data.currentRound ? data.currentRound + 1 : 1;
+    const currentRound = (data.currentRound + 1) ?? 1;
 
     var newData = data;
 
@@ -27,7 +27,7 @@ export function setNextEnemy(data)
 export function setNextRound(data)
 {
     var newData = data;
-    const newRound = data.currentRound ? data.currentRound + 1 : 0;
+    const newRound = (data.currentRound + 1) ?? 1;
     newData.currentRound = newRound;
 
     if(newRound > data.gameRounds) return data;
