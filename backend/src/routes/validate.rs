@@ -1,5 +1,5 @@
 use actix_files::NamedFile;
-use actix_web::{get, post, web, HttpResponse, Error};
+use actix_web::{post, web, HttpResponse, Error};
 use actix_session::Session;
 use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter};
 use std::{env};
@@ -7,8 +7,8 @@ use std::{env};
 use crate::models::validate_request::ValidateRequest;
 use crate::models::participations;
 
-#[get("/validate")]
 pub async fn validate_get() -> Result<NamedFile, Error> {
+    // log::info!("Validate get.");
     let front_build = format!("{}/validate.html", env::var("FRONT_DIR").expect("Frontend deployment directory not set"));
     Ok(actix_files::NamedFile::open_async(front_build).await?)
 }
@@ -36,6 +36,10 @@ async fn validate_post(
             session.insert("authenticated", true).unwrap_or_else(|e| {
                 eprintln!("Session insert error: {:?}", e);
             });
+            session.insert("role", "student").unwrap_or_else(|e| {
+                eprintln!("Session insert error: {:?}", e);
+            });
+            // log::info!("Inserting student as role.");
             HttpResponse::Ok().finish()
         }
         Ok(false) => {

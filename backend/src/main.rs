@@ -10,6 +10,7 @@ use std::env;
 
 mod models;
 mod routes;
+mod tools;
 
 
 #[actix_web::main]

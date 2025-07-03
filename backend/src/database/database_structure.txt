@@ -73,3 +73,6 @@ Player.rank 46 : player.score
 Opponent rank player.rank/2 : score player.score + applesCount + 3
 win                                       lose
 Player rank 20  : player.score ...        player.score+ ? player.rank-=11 : player.rank
+
+Running backend
+RUST_LOG=info cargo run

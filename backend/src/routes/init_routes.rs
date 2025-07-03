@@ -10,6 +10,7 @@ pub fn init_routes(cfg: &mut web::ServiceConfig) {
 
     cfg.service(Files::new("/assets", format!("{}/assets", front_dir)).prefer_utf8(true));
     cfg.service(game::game);
-    cfg.service(validate::validate_get);
     cfg.service(validate::validate_post);
+    cfg.route("/validate", web::get().to(validate::validate_get));
+    cfg.route("/", web::get().to(validate::validate_get));
 }
