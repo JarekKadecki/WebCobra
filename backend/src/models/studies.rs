@@ -9,8 +9,8 @@ pub struct Model {
     pub id: i32,
     pub name: Option<String>,
     pub created_at: Option<DateTime>,
-    #[sea_orm(column_type = "Text", nullable)]
-    pub configuration: Option<String>,
+    #[sea_orm(column_type = "JsonBinary", nullable)]
+    pub configuration: Option<Json>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

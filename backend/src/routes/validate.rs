@@ -2,10 +2,10 @@ use actix_files::NamedFile;
 use actix_web::{post, web, HttpResponse, Error};
 use actix_session::Session;
 use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter};
-use std::{env};
+use std::env;
 
 use crate::models::validate_request::ValidateRequest;
-use crate::models::participations;
+use crate::models::{participations};
 
 pub async fn validate_get() -> Result<NamedFile, Error> {
     // log::info!("Validate get.");
@@ -30,7 +30,7 @@ async fn validate_post(
 ) -> HttpResponse {
     let hash = &creds.key;
 
-    log::info!("Hello from validate.");
+    // log::info!("Hello from validate.");
     match validate_key(db, hash).await {
         Ok(true) => {
             session.insert("authenticated", true).unwrap_or_else(|e| {
@@ -39,8 +39,15 @@ async fn validate_post(
             session.insert("role", "student").unwrap_or_else(|e| {
                 eprintln!("Session insert error: {:?}", e);
             });
+            session.insert("hash", hash).unwrap_or_else(|e| {
+                eprintln!("Session insert error: {:?}", e);
+            });
             // log::info!("Inserting student as role.");
             HttpResponse::Ok().finish()
+            // HttpResponse::Found()
+            //     .append_header(("Location", "/game"))
+            //     .finish()
+
         }
         Ok(false) => {
             HttpResponse::Unauthorized().body("Invalid key.")

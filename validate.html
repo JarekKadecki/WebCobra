@@ -23,7 +23,13 @@
             });
 
             if (response.ok) {
-                window.location.href = '/game';
+                const conf = await fetch('/api/get_configuration', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                console.log("recived conf: ", JSON.stringify(conf));
+                // window.location.href = '/game';
             } else {
                 document.getElementById('error').innerText = 'Incorrect key.';
             }

@@ -44,9 +44,5 @@ async fn main() -> std::io::Result<()> {
 
 
 // to do
-//     main.rs: napisac jakis server
-//     models: wygenerowac modele
 //     routes: tudaj dodac obslugę różnych routów
 //     database: jakas sprytna obsluga bazy danych
-//     - gzdies wstawic jakies mechanizmy logowania
-//     - gdzies wstawic jakies customowe errory i waningi
