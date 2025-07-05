@@ -9,6 +9,11 @@ use crate::tools::get_configuration::get_configuration_by_hash;
 
 #[get("/api/get_configuration")]
 async fn get_configuration(session: Session, db: web::Data<DatabaseConnection>) -> HttpResponse {
+    if let Err(e) = RoleCheck::check(&session, "student") {
+        return e.error_response()
+    }
+
+
     let hash = match session.get::<String>("hash") {
         Ok(Some(h)) => h,
         _ => return HttpResponse::BadRequest().body("The session supplied with invalid hash."),

@@ -72,6 +72,8 @@ export class FirstBoost extends Scene {
                 else
                 {
                     //go to question form
+                    const endGame = this.registry.get('questionnaire');
+                    endGame(data);
                 }
         });
 

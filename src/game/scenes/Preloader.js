@@ -68,7 +68,7 @@ export class Preloader extends Scene
     {
         const defaultData = {
             gameRounds: 3,
-            currentRound: 0,
+            currentRound: 3,
             opponentPosition: 92, //46 !6-> 40 --> 20 !6->14 --> 7 !6-> 1
             opponentScore: 20,
             opponentScoreUpgrade: 15,
@@ -112,6 +112,7 @@ export class Preloader extends Scene
         }
 
         var data = this.registry.get('configuration');
+        data = defaultData;
 
         if(!data)
         {

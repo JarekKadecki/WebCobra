@@ -10,9 +10,9 @@ function App() {
     const fetchConfig = async () => {
       try {
         const res = await fetch('/api/get_configuration');
-        if (!res.ok) throw new Error("Failed to fetch config");
+        if (!res.ok) throw new Error('Failed to fetch config');
         const json = await res.json();
-        console.log("Configuration fetched:\n", JSON.stringify(json));
+        console.log('Configuration fetched:\n', JSON.stringify(json));
         setConfigData(json);
       } catch (err) {
         console.error('Error fetching config:', err);
@@ -26,6 +26,15 @@ function App() {
     // console.log("App test");
   };
 
+  const onGameFinished = async (data) => {
+    await fetch('/api/submit_results', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    window.location.href = '/questionnaire';
+  };
+
   return (
     <div id="app">
       {(
@@ -33,6 +42,7 @@ function App() {
           ref={phaserRef}
           configData={configData}
           currentActiveScene={currentScene}
+          gameFinish={onGameFinished}
         />
       )}
     </div>
