@@ -43,11 +43,11 @@ export const config = {
 
 
 
-const StartGame = (parent, configData, gameFinnish) => {
+const StartGame = (parent, configData, gameFinish) => {
 
     const game = new Phaser.Game({ ...config, parent });
     game.registry.set('configuration', configData);
-    game.registry.set('questionnaire', gameFinnish);
+    game.registry.set('questionnaire', gameFinish);
 
     return game;
 

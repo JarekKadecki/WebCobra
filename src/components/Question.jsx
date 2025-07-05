@@ -11,7 +11,7 @@ const Question = ({ question, onAnswer }) => {
             name={question.id}
             value={option}
             onChange={() => onAnswer(question.id, option)}
-          />
+          /><br/>
           {option}
         </label>
       ))}

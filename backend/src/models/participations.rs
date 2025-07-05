@@ -12,9 +12,9 @@ pub struct Model {
     #[sea_orm(unique)]
     pub hash: Option<String>,
     pub finished: Option<bool>,
-    #[sea_orm(column_type = "Text", nullable)]
     pub answers: Option<String>,
     pub date: Option<DateTime>,
+    pub stats: Option<String>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

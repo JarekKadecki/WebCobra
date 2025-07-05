@@ -35,6 +35,7 @@ Ref studies_participations: participations.study_id > studies.id
 
 psql -U study_admin -d study_db;
 sea-orm-cli generate entity -u postgres://study_admin:a41b09a8d0c4@localhost:5432/study_db -o src/models
+add "pub mod validate_request;" to models/mod.rs
 
 
 \du         - list users
