@@ -23,18 +23,7 @@
             });
 
             if (response.ok) {
-                const conf = await fetch('/api/get_configuration', {
-                        method: 'POST'        
-                });
-                
-                if (conf.ok) {
-                    const config = await conf.json();
-                    console.log("Received config:", config);
-                    // You can now use this config or redirect
-                    // window.location.href = '/game';
-                } else {
-                    console.error("Failed to fetch configuration.");
-                }
+                window.location.href = '/game'
             } else {
                 document.getElementById('error').innerText = 'Incorrect key.';
             }

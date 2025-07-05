@@ -66,7 +66,7 @@ export class Preloader extends Scene
 
     create ()
     {
-        const data = {
+        const defaultData = {
             gameRounds: 3,
             currentRound: 0,
             opponentPosition: 92, //46 !6-> 40 --> 20 !6->14 --> 7 !6-> 1
@@ -109,6 +109,13 @@ export class Preloader extends Scene
                     bottomRightText: 'Proceed',
                 }
             }
+        }
+
+        var data = this.registry.get('configuration');
+
+        if(!data)
+        {
+            data = defaultData;
         }
 
         data.roundApplesSteal   = [];

@@ -20,9 +20,12 @@ Table participations {
   study_id integer
   hash varchar [unique]
   finished boolean
+  stats varchar2
   answers varchar2
   date timestamp
 }
+
+varchar2 == json
 
 Ref user_participations: participations.user_id > users.id
 

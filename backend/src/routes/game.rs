@@ -7,7 +7,7 @@ use sea_orm::{DatabaseConnection};
 use crate::tools::role_check::RoleCheck;
 use crate::tools::get_configuration::get_configuration_by_hash;
 
-#[post("/api/get_configuration")]
+#[get("/api/get_configuration")]
 async fn get_configuration(session: Session, db: web::Data<DatabaseConnection>) -> HttpResponse {
     let hash = match session.get::<String>("hash") {
         Ok(Some(h)) => h,
@@ -33,6 +33,6 @@ async fn get_configuration(session: Session, db: web::Data<DatabaseConnection>) 
 pub async fn game(session: Session) -> Result<NamedFile, Error> {
     RoleCheck::check(&session, "student")?;
 
-    let front_build = format!("{}/game.html", env::var("FRONT_DIR").expect("Frontend deployment directory not set"));
+    let front_build = format!("{}/index.html", env::var("FRONT_DIR").expect("Frontend deployment directory not set"));
     Ok(actix_files::NamedFile::open_async(front_build).await?)
 }

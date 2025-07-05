@@ -9,7 +9,7 @@ use crate::models::{participations};
 
 pub async fn validate_get() -> Result<NamedFile, Error> {
     // log::info!("Validate get.");
-    let front_build = format!("{}/validate.html", env::var("FRONT_DIR").expect("Frontend deployment directory not set"));
+    let front_build = format!("{}/validate.html", env::var("STATIC_DIR").expect("Frontend deployment directory not set"));
     Ok(actix_files::NamedFile::open_async(front_build).await?)
 }
 

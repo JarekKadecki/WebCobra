@@ -43,9 +43,12 @@ export const config = {
 
 
 
-const StartGame = (parent) => {
+const StartGame = (parent, configData) => {
 
-    return new Phaser.Game({ ...config, parent });
+    const game = new Phaser.Game({ ...config, parent });
+    game.registry.set('configuration', configData);
+
+    return game;
 
 }
 

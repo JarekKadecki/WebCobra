@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { resolve } from 'path';
 
 const phasermsg = () => {
     return {
@@ -22,6 +23,10 @@ export default defineConfig({
     logLevel: 'warning',
     build: {
         rollupOptions: {
+            input: {
+                main: resolve(__dirname, '../index.html'),
+                validate: resolve(__dirname, '../static/validate.html'),
+            },
             output: {
                 manualChunks: {
                     phaser: ['phaser']
