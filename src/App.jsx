@@ -9,7 +9,7 @@ function App() {
   useEffect(() => {
     const fetchConfig = async () => {
       try {
-        const res = await fetch('/api/get_configuration');
+        const res = await fetch('/api/get_configuration', {method: 'POST'});
         if (!res.ok) throw new Error('Failed to fetch config');
         const json = await res.json();
         console.log('Configuration fetched:\n', JSON.stringify(json));

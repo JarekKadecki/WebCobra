@@ -6,6 +6,7 @@ Table studies {
   name varchar
   created_at timestamp
   configuration varchar2
+  questions varchar2
 }
 
 Table users {
@@ -24,6 +25,7 @@ Table participations {
   answers varchar2
   date timestamp
 }
+
 
 varchar2 == json
 
@@ -80,3 +82,22 @@ Player rank 20  : player.score ...        player.score+ ? player.rank-=11 : play
 
 Running backend
 RUST_LOG=info cargo run
+
+Write uniwersal api for data handling
+
+get_questions
+get_configuration
+add_study
+remove_study
+generate_keys
+submit_results
+submit_answers
+
+api/get_questions -> POST -> retrives studies.questions based on hash stored in session
+api/get_configuration -> POST -> retrives studies.configuration based on hash stored in session
+api/add_study -> POST -> transfers json data with study.name, adds new entry in studies table with default configuration
+api/remove_study -> POST -> removes entry from studies table basing on name transfered in json data
+api/generate_keys -> POST -> creates number of entries in participations table, number and studyName are stored in transferred json
+api/submit_results -> POST -> updates participations.stats with data stored in JSON basing hash stored in session
+api/submit_aswers -> POST -> updates participations.answers with data stored in JSON basing on hash stored in session
+Mentioned hash can lead to study_id that can lead to studies.id
