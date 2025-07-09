@@ -4,6 +4,6 @@ import AdminPanel from './components/AdminPanel';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
-        <AdminPanel></AdminPanel>
+        <AdminPanel/>
     </React.StrictMode>,
 )
