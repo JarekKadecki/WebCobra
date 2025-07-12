@@ -47,3 +47,54 @@ body {
         color: rgba(255, 255, 255, 0.3);
     }
 }
+
+#leftAdminPanel, #centralAdminPanel {
+  display: inline-block;
+}
+
+#centralAdminPanel {
+  width: 50%;
+  text-align: center;
+  font-size: 20px;
+}
+
+#centralAdminPanel button, select, input {
+  background-color: #A07075;
+  width: 20em;
+  height: 5em;
+  border: none;
+  color: white;
+  padding: 20px 32px;
+  margin: 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 15px;
+}
+
+inptu[type="text"] {
+  font-size: 20px;
+}
+
+#leftAdminPanel {
+  text-align: center;
+}
+
+#leftAdminPanel label {
+  font-size: 40px;
+  margin: 50px 40px;
+}
+
+.leftAdminPanelButtons  {
+  background-color: #505055;
+  width: 20em;
+  height: 5em;
+  border: none;
+  color: white;
+  padding: 20px 32px;
+  margin: 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 20px;
+}

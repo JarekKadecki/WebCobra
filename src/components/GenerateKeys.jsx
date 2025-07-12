@@ -39,10 +39,10 @@ const GenerateKeys = () => {
   return (
     <form onSubmit={handleSubmit}>
         <label>Select study</label><br/>
-        <StudySelect selectCallback={selectStudy}></StudySelect>
+        <StudySelect selectCallback={selectStudy}></StudySelect><br/>
         <label>Provide number o keys to generate</label><br/>
-        <input type="number" id="numberInput" value="0" onChange={(e) => setKeysNumber(e.target.value)} min="0"/>
-        <button type="submit"></button>
+        <input type="number" id="numberInput" value="0" onChange={(e) => setKeysNumber(e.target.value)} min="0"/><br/>
+        <button type="submit">Submit</button>
       
     </form>
   );

@@ -9,13 +9,19 @@ const AdminPanel = () => {
 
   return (
   <>
-    <label>Choose panel</label>
-    <button onClick={()=>setSelection("addRemove")}>Add/Remove study</button><br/>
-    {selection == "addRemove" && <StudyAddRemove></StudyAddRemove>}
-    <button onClick={()=>setSelection("edit")}>Edit study</button><br/>
-    {selection == "edit" && <StudyEdit></StudyEdit>}
-    <button onClick={()=>setSelection("generateKeys")}>Generate keys</button><br/>
-    {selection == "generateKeys" && <GenerateKeys></GenerateKeys>}
+    <div id="leftAdminPanel">
+      <label>Choose panel</label>
+      <div>
+        <button class="leftAdminPanelButtons" onClick={()=>setSelection("addRemove")}>Add/Remove study</button><br/>
+        <button class="leftAdminPanelButtons" onClick={()=>setSelection("edit")}>Edit study</button><br/>
+        <button class="leftAdminPanelButtons" onClick={()=>setSelection("generateKeys")}>Generate keys</button><br/>
+      </div>
+    </div>
+    <div id="centralAdminPanel">
+      {selection == "addRemove" && <StudyAddRemove></StudyAddRemove>}
+      {selection == "edit" && <StudyEdit></StudyEdit>}
+      {selection == "generateKeys" && <GenerateKeys></GenerateKeys>}
+    </div>
   </>
   );
 };

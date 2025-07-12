@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { PhaserGame } from './game/PhaserGame';
+import '../public/style.css';
 
 function App() {
   const phaserRef = useRef();

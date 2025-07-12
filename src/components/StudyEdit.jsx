@@ -45,7 +45,7 @@ const StudyEdit = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <StudySelect selectCallback={selectStudy}></StudySelect>
+      <StudySelect selectCallback={selectStudy}></StudySelect><br/>
 
       {selectedStudy && (
         <>
@@ -61,6 +61,7 @@ const StudyEdit = () => {
             onSubmit={onSubmitEnclosure("questions")}
             api="/api/get_questions"
           />
+          <br/>
           <textarea
             id={textAreaId}
             value={textAreaContent}
@@ -68,6 +69,7 @@ const StudyEdit = () => {
             rows={12}
             style={{ width: "100%", marginTop: "1em" }}
           />
+          <br/>
           <button type="submit">Edit data</button>
         </>
       )}

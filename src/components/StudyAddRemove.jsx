@@ -55,14 +55,20 @@ const StudyAddRemove = () => {
   return (
     <form onSubmit={handleSubmit}>
         <button onClick={()=>setSelectedAction("add")}>Add Study</button>
-        <button onClick={()=>setSelectedAction("remove")}>Remove Study</button>
+        <button onClick={()=>setSelectedAction("remove")}>Remove Study</button><br/>
 
-        {selectedAction == "add" && 
-            <input type="text" id="addStudyInput"/> }
+        {selectedAction == "add" &&
+            <>
+                <label>Select name of new study</label><br/>
+                <input type="text" id="addStudyInput"/> 
+            </>}
         {selectedAction == "remove" &&
-            <StudySelect selectCallback={selectStudy}></StudySelect>}
+            <>
+                <label>Select study to remove </label><br/>
+                <StudySelect selectCallback={selectStudy}></StudySelect><br/>
+            </>}
         {selectedAction && 
-            <button type="submit"></button>}
+            <button type="submit">Submit</button>}
       
     </form>
   );
