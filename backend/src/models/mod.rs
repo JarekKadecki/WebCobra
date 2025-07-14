@@ -6,3 +6,4 @@ pub mod participations;
 pub mod studies;
 pub mod users;
 pub mod validate_request;
+pub mod login_request;

@@ -15,6 +15,7 @@ const AdminPanel = () => {
         <button class="leftAdminPanelButtons" onClick={()=>setSelection("addRemove")}>Add/Remove study</button><br/>
         <button class="leftAdminPanelButtons" onClick={()=>setSelection("edit")}>Edit study</button><br/>
         <button class="leftAdminPanelButtons" onClick={()=>setSelection("generateKeys")}>Generate keys</button><br/>
+        <button class="leftAdminPanelButtons" onClick={()=>setSelection("generateRaport")}>Generate raport</button><br/>
       </div>
     </div>
     <div id="centralAdminPanel">

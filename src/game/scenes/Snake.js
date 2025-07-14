@@ -69,7 +69,7 @@ export class Snake extends Scene
         this.cursors = this.input.keyboard.createCursorKeys();
 
         // setting up snake game
-        this.snakeGame = new SnakeGame(this, this.gameContainer, 500, this.gridDimetions.x, this.gridDimetions.y, this.cellSize);
+        this.snakeGame = new SnakeGame(this, this.gameContainer, 300, this.gridDimetions.x, this.gridDimetions.y, this.cellSize);
         
         if( applesStolen > 0)
         {

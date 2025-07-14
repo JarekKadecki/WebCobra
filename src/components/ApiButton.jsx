@@ -1,9 +1,10 @@
 import { useState } from 'react';
 
-const ApiButton = ({ study, editionField, onSubmit, api }) => {
+const ApiButton = ({ study, editionField, updateOnSubmit, api }) => {
   const [data, setData] = useState("");
 
   const fetchData = async () => {
+    updateOnSubmit()
     try {
       const res = await fetch(api, {
         method: 'POST',
@@ -17,6 +18,7 @@ const ApiButton = ({ study, editionField, onSubmit, api }) => {
 
       const json = await res.json();
       const dataStr = JSON.stringify(json, null, 2);
+      document.getElementById(editionField).value = "";
       document.getElementById(editionField).value = dataStr;
       setData(dataStr);
     } catch (err) {
@@ -27,13 +29,13 @@ const ApiButton = ({ study, editionField, onSubmit, api }) => {
   let buttonText = "?";
 
   switch (api) {
-    case "/get_configuration":
+    case "/api/get_configuration":
       buttonText = "Configuration";
       break;
-    case "/get_questions":
+    case "/api/get_questions":
       buttonText = "Questions";
       break;
-    case "/get_raport":
+    case "/api/get_raport":
       buttonText = "Raport";
       break;
     default:

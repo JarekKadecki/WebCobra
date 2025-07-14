@@ -6,8 +6,13 @@ const StudySelect = ({ selectCallback }) => {
 
     useEffect(() => {
         const fetchStudies = async () => {
-        const res = await fetch('/api/get_studies', { method: 'POST' });
+        const res = await await fetch('/api/get_studies', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({}),
+            });
         const data = await res.json();
+        console.log(`recived studies: ${JSON.stringify(data)}.`);
         setStudies(data);
         };
         fetchStudies();
@@ -17,8 +22,8 @@ const StudySelect = ({ selectCallback }) => {
         <select onChange={(e) => selectCallback(e.target.value)} defaultValue="">
             <option value="" disabled>Select study</option>
             {studies.map((study) => (
-            <option key={study.name} value={study.name}>
-                {study.name}
+            <option key={study} value={study}>
+                {study}
             </option>
         ))}
         </select>

@@ -1,11 +1,12 @@
 use actix_web::{web, HttpResponse, post};
 use actix_session::Session;
-use sea_orm::{EntityTrait, Set, ActiveModelTrait, QueryFilter, ColumnTrait, DatabaseConnection};
+use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, QueryOrder, QuerySelect, Set};
 use serde_json::Value;
 use chrono::Utc;
 
 use crate::models::{studies, participations};
-use crate::tools::role_check::RoleCheck;
+use crate::tools::is_valid_json::is_valid_json;
+use crate::tools::role_check::{self, RoleCheck};
 
 #[post("/api/{action}")]
 pub async fn handle_api(
@@ -17,43 +18,99 @@ pub async fn handle_api(
     let action = path.into_inner();
     let data = payload.into_inner();
 
+    log::info!("Request to post:api/{}", action);
+
     match action.as_str() {
         "get_studies" => {
-            match studies::Entity::find().all(db.get_ref()).await {
-                Ok(studies) => {
-                    let names: Result<Vec<String>, _> = studies
-                        .into_iter()
-                        .map(|s| s.name.ok_or("Missing study name"))
-                        .collect();
+            
+            if let Err(e) = RoleCheck::check(&session, "admin") {
+                return e.error_response();
+            }
 
-                    match names {
-                        Ok(name_list) => HttpResponse::Ok().json(name_list),
-                        Err(_) => HttpResponse::BadRequest().body("Could not fetch study names."),
-                    }
-                }
+            match studies::Entity::find()
+                .select_only()
+                .column(studies::Column::Name)
+                .into_tuple::<Option<String>>()
+                .all(db.get_ref())
+                .await
+            {
+                Ok(names) => {
+                    let name_list: Vec<String> = names.into_iter().flatten().collect();
+                    log::info!("Collected study names: {:?}", name_list);
+                    HttpResponse::Ok().json(name_list)
+                },
                 Err(_) => HttpResponse::BadRequest().body("Could not fetch study names."),
             }
         }
 
         "get_configuration" | "get_questions" => {
-            // Get hash from session
-            let hash = match session.get::<String>("hash") {
-                Ok(Some(h)) => h,
-                _ => return HttpResponse::BadRequest().body("Missing or invalid session hash."),
+            let role = session.get::<String>("role").unwrap_or(None);
+
+            let study = if role == Some("student".to_string()) {
+                let hash = match session.get::<String>("hash") {
+                    Ok(Some(h)) => h,
+                    _ => return HttpResponse::BadRequest().body("Missing or invalid session hash."),
+                };
+
+                let participation = match participations::Entity::find()
+                    .filter(participations::Column::Hash.eq(hash))
+                    .one(db.get_ref())
+                    .await
+                {
+                    Ok(Some(p)) => p,
+                    _ => return HttpResponse::NotFound().body("Participation not found."),
+                };
+
+                match studies::Entity::find_by_id(participation.study_id.unwrap_or_default())
+                    .one(db.get_ref())
+                    .await
+                {
+                    Ok(Some(s)) => s,
+                    _ => return HttpResponse::NotFound().body("Study not found."),
+                }
+            } else if role == Some("admin".to_string()) {
+                let study_name = data["study"].as_str().unwrap_or("").to_string();
+                match studies::Entity::find()
+                    .filter(studies::Column::Name.eq(study_name))
+                    .one(db.get_ref())
+                    .await
+                {
+                    Ok(Some(s)) => s,
+                    _ => return HttpResponse::NotFound().body("Study not found."),
+                }
+            } else {
+                return HttpResponse::BadRequest().body("Unauthorized.");
             };
 
-            // Find participation by hash
-            let participation = match participations::Entity::find()
-                .filter(participations::Column::Hash.eq(hash))
-                .one(db.get_ref())
-                .await
-            {
-                Ok(Some(p)) => p,
-                _ => return HttpResponse::NotFound().body("Participation not found."),
+            let field = if action == "get_configuration" {
+                log::info!("Returning configuration: {:?} of {:?}", &study.configuration, study.name);
+                &study.configuration
+            } else {
+                log::info!("Returning questions: {:?} of {:?}", &study.questions, study.name);
+                &study.questions
             };
 
-            // Find related study
-            let study = match studies::Entity::find_by_id(participation.study_id.unwrap_or_default())
+            match field {
+                Some(x) => HttpResponse::Ok().json(serde_json::from_str::<Value>(x).unwrap_or(Value::Null)),
+                None => HttpResponse::BadRequest().body("Missing or invalid field passed."),
+            }
+        }
+
+        "set_questions" | "set_configuration" => {
+            if let Err(e) = RoleCheck::check(&session, "admin") {
+                return e.error_response();
+            }
+
+            let field = data["fieldToUpdate"].as_str().unwrap_or("");
+            let study_name = data["study"].as_str().unwrap_or("");
+            let value = data["value"].as_str().unwrap_or("{}");
+
+            if(is_valid_json(value) == false) {
+                return HttpResponse::BadRequest().body("Invalid JSON provided.")
+            }
+
+            let study = match studies::Entity::find()
+                .filter(studies::Column::Name.eq(study_name))
                 .one(db.get_ref())
                 .await
             {
@@ -61,21 +118,31 @@ pub async fn handle_api(
                 _ => return HttpResponse::NotFound().body("Study not found."),
             };
 
-            let field = if action == "get_configuration" {
-                &study.configuration
-            } else {
-                &study.questions
-            };
+            let mut active_model: studies::ActiveModel = study.into();
 
             match field {
-                Some(x) => 
-                HttpResponse::Ok().json(serde_json::from_str::<Value>(x).unwrap_or(Value::Null)),
-                None => HttpResponse::BadRequest().body("Missing or invalid field passed."),
+                "questions" => active_model.questions = Set(Some(value.to_string())),
+                "configuration" => active_model.configuration = Set(Some(value.to_string())),
+                _ => return HttpResponse::BadRequest().body("Invalid fieldToUpdate value."),
+            }
+
+            match active_model.update(db.get_ref()).await {
+                Ok(_) => HttpResponse::Ok().body("Study updated."),
+                Err(e) => {
+                    eprintln!("Update error: {:?}", e);
+                    HttpResponse::InternalServerError().finish()
+                }
             }
         }
 
+        
         "add_study" => {
-            let name = Some(data["name"].to_string().to_owned());
+
+            if let Err(e) = RoleCheck::check(&session, "student") {
+                return e.error_response();
+            }
+
+            let name = Some(data["study"].as_str().unwrap_or("").to_string());
 
             let model = studies::ActiveModel {
                 name: Set(name),
@@ -95,7 +162,12 @@ pub async fn handle_api(
         }
 
         "remove_study" => {
-            let name = data["name"].as_str().unwrap_or("");
+
+            if let Err(e) = RoleCheck::check(&session, "student") {
+                return e.error_response();
+            }
+
+            let name = data["study"].as_str().unwrap_or("");
             let result = studies::Entity::delete_many()
                 .filter(studies::Column::Name.eq(name))
                 .exec(db.get_ref())
@@ -111,8 +183,15 @@ pub async fn handle_api(
         }
 
         "generate_keys" => {
+
+            if let Err(e) = RoleCheck::check(&session, "student") {
+                return e.error_response();
+            }
+
             let study_name = data["study"].as_str().unwrap_or("");
             let count = data["number"].as_u64().unwrap_or(0) as usize;
+
+            log::info!("Generating {:?} participations for {:?}.", count, study_name);
 
             let study = match studies::Entity::find()
                 .filter(studies::Column::Name.eq(study_name))
@@ -131,11 +210,58 @@ pub async fn handle_api(
                     date: Set(Some(Utc::now().naive_utc())),
                     ..Default::default()
                 };
-                let _ = participation.insert(db.get_ref()).await;
+
+                if let Err(e) = participation.insert(db.get_ref()).await {
+                    eprintln!("Failed to insert participation: {:?}", e);
+                }
+
             }
 
             HttpResponse::Ok().body("Keys generated.")
         }
+
+        "get_keys" => {
+
+            if let Err(e) = RoleCheck::check(&session, "student") {
+                return e.error_response();
+            }
+            
+            let study_name = data["study"].as_str().unwrap_or("");
+            let count = data["number"].as_u64().unwrap_or(0) as usize;
+
+            log::info!("Returning {:?} participations for {:?}.", count, study_name);
+
+            let study = match studies::Entity::find()
+                .filter(studies::Column::Name.eq(study_name))
+                .one(db.get_ref())
+                .await
+            {
+                Ok(Some(s)) => s,
+                _ => return HttpResponse::NotFound().body("Study not found."),
+            };
+
+            let participations_list = match participations::Entity::find()
+                .filter(participations::Column::StudyId.eq(Some(study.id)))
+                .order_by_desc(participations::Column::Date)
+                .limit(count as u64)
+                .all(db.get_ref())
+                .await
+            {
+                Ok(list) => list,
+                Err(e) => {
+                    eprintln!("Fetch keys error: {:?}", e);
+                    return HttpResponse::InternalServerError().finish();
+                }
+            };
+
+            let hashes: Vec<String> = participations_list
+                .into_iter()
+                .filter_map(|p| p.hash)
+                .collect();
+
+            HttpResponse::Ok().json(hashes)
+        }
+
 
         "submit_results" | "submit_answers" => {
             if let Err(e) = RoleCheck::check(&session, "student") {

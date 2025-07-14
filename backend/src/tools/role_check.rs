@@ -11,11 +11,17 @@ impl RoleCheck {
 
         let role = session.get::<String>("role").unwrap_or(None);
 
+        let redirect = if required == "admin" {
+                "/admin/login"
+            } else {
+                "/"
+            };
+
         match (is_authenticated, role.as_deref()) {
             (true, Some(role)) if role == required => Ok(()),
             _ => {
                 let response = HttpResponse::TemporaryRedirect()
-                    .insert_header((header::LOCATION, "/"))
+                    .insert_header((header::LOCATION, redirect))
                     .finish();
 
                 Err(InternalError::from_response("Redirecting", response).into())

@@ -12,7 +12,7 @@ const StudyEdit = () => {
     e.preventDefault();
 
     if (!fieldtoUpdate || !selectedStudy) {
-      alert("Select a study and an action before submitting.");
+      alert(`Select a study ${selectedStudy} and an action ${fieldtoUpdate} before submitting.`);
       return;
     }
 
@@ -22,18 +22,24 @@ const StudyEdit = () => {
       value: textAreaContent
     };
 
-    try {
-      await fetch(apiCall, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+    const res = await fetch("/api/set_questions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
-      });
+    });
 
-      alert('Changes submitted!');
-    } catch (err) {
-      console.error("Submission failed:", err);
-      alert("Submission failed.");
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error("Submission failed:", errorText);
+      document.getElementById("errorMessage").innerHTML = errorText;
+    } else {
+      document.getElementById("errorMessage").innerHTML = "";
     }
+
+    if(res.ok) {
+      alert("Changes submitted");
+    }
+
   };
 
   const textAreaId = "editionArea";
@@ -52,16 +58,18 @@ const StudyEdit = () => {
           <ApiButton
             study={selectedStudy}
             editionField={textAreaId}
-            onSubmit={onSubmitEnclosure("configuration")}
+            updateOnSubmit={onSubmitEnclosure("configuration")}
             api="/api/get_configuration"
           />
           <ApiButton
             study={selectedStudy}
             editionField={textAreaId}
-            onSubmit={onSubmitEnclosure("questions")}
+            updateOnSubmit={onSubmitEnclosure("questions")}
             api="/api/get_questions"
           />
           <br/>
+          <label id="errorMessage">
+          </label>
           <textarea
             id={textAreaId}
             value={textAreaContent}
@@ -70,6 +78,10 @@ const StudyEdit = () => {
             style={{ width: "100%", marginTop: "1em" }}
           />
           <br/>
+          {fieldtoUpdate && 
+            <>
+              <label>Changing <b>{fieldtoUpdate}</b> of <b>{selectedStudy}</b>.</label><br/>
+            </>}
           <button type="submit">Edit data</button>
         </>
       )}

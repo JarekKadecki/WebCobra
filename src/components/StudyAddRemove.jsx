@@ -15,17 +15,22 @@ const StudyAddRemove = () => {
 
         if(selectedAction == "add") {
             const formData = {
-                name: document.getElementById("addStudyInput").value
+                study: document.getElementById("addStudyInput").value
             }
 
             try {
-                await fetch("/api/add_study", {
+                const res = await fetch("/api/add_study", {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData),
                 });
 
-                console.log(`Study ${formData.name} sent to be added.`);
+                console.log(`Study ${formData.study} sent to be added.`);
+
+                if(res.ok) {
+                    alert(`Study ${formData.study} sent to be added.`);
+                }
+
             } catch (err) {
                 console.error("add_study failed:", err);
                 alert("Submission failed.");
@@ -34,7 +39,7 @@ const StudyAddRemove = () => {
 
         if(selectedAction == "remove") {
             const formData = {
-                name: selectedStudy
+                study: selectedStudy
             }
 
             try {
@@ -54,13 +59,13 @@ const StudyAddRemove = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-        <button onClick={()=>setSelectedAction("add")}>Add Study</button>
-        <button onClick={()=>setSelectedAction("remove")}>Remove Study</button><br/>
+        <button type="button" onClick={()=>setSelectedAction("add")}>Add Study</button>
+        <button type="button" onClick={()=>setSelectedAction("remove")}>Remove Study</button><br/>
 
         {selectedAction == "add" &&
             <>
                 <label>Select name of new study</label><br/>
-                <input type="text" id="addStudyInput"/> 
+                <input type="text" id="addStudyInput"/><br/>
             </>}
         {selectedAction == "remove" &&
             <>

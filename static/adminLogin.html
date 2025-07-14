@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>login</title>
+</head>
+<body>
+    <h1>Admin Panel LogIn</h1>
+    <form id="loginForm">
+        <input type="text" id="login" placeholder="admin" required />
+        <input type="password" id="password" required />
+        <button type="submit">Submit</button>
+    </form>
+    <p id="error"></p>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const login = document.getElementById('login').value;
+            const password = document.getElementById('password').value;
+
+            const data = {
+                login: login,
+                password: password
+            }
+
+            const response = await fetch('/api/admin/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                window.location.href = '/admin'
+            } else {
+                document.getElementById('error').innerText = 'Incorrect credentils.';
+            }
+        });
+    </script>
+
+</body>
+</html>
