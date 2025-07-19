@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import StudySelect from './StudySelect';
+import { generateReport } from '../game/functions/generateReport';
 
-const GenerateKeys = () => {
+const GenerateReport = () => {
     const [selectedStudy, selectStudy] = useState("");
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!selectedStudy) {
-                alert("Select a study to generate keys.");
+                alert("Select a study to generate report.");
             return;
         }
 
@@ -16,33 +17,33 @@ const GenerateKeys = () => {
             study: selectedStudy
         }
 
-        const res = await fetch("/api/generate_raport", {
+        const res = await fetch("/api/generate_report", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData),
         });
 
-        console.log(`Generating raport for ${selectedStudy}.`);
+        console.log(`Generating report for ${selectedStudy}.`);
 
         if (res.ok) {
 
-            const raportData = await res.json();
-            const fileContent = raportData.join('\n');
+            const reportData = await res.json();
+            const fileContent = generateReport(reportData);
 
             //insert data validation and processing
 
-            const blob = new Blob([fileContent], { type: 'text/plain' });
+            const blob = new Blob([fileContent], { type: 'text/csv' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `raport_${selectedStudy}.txt`;
+            link.download = `report_${selectedStudy}.csv`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
         } else if(!res.ok)
         {
-            console.error("generate_raport failed:", err);
+            console.error("generate_report failed:", err);
             alert("Submission failed.");
         }
     }
@@ -51,11 +52,9 @@ const GenerateKeys = () => {
     <form onSubmit={handleSubmit}>
         <label>Select study</label><br/>
         <StudySelect selectCallback={selectStudy}></StudySelect><br/>
-        <label>Provide number o keys to generate</label><br/>
         <button type="submit">Generate</button>
-      
     </form>
   );
 };
 
-export default GenerateKeys;
+export default GenerateReport;

@@ -20,6 +20,7 @@ export class Snake extends Scene
     updatedDirection = false;
     data = null;
     gameContainer = null;
+    allowDirectionChange = true;
 
 
     constructor ()
@@ -34,6 +35,7 @@ export class Snake extends Scene
         const sceneData = data.scenesData.Snake;
         this.data = data;
         const applesStolen = data.roundApplesSteal[data.currentRound] ?? 0;
+        this.allowDirectionChange = true;
 
         //setting oponent info panel
         const opponentImage = this.add.image(0, 0, sceneData.opponentImage)
@@ -87,15 +89,19 @@ export class Snake extends Scene
     {
         
         if(this.cursors.up.isDown) {
+            this.allowDirectionChange = false;
             this.snakeGame.setDirection('Up');
             this.updatedDirection = true;
         } else if(this.cursors.down.isDown) {
+            this.allowDirectionChange = false;
             this.snakeGame.setDirection('Down');
             this.updatedDirection = true;
         } else if(this.cursors.left.isDown) {
+            this.allowDirectionChange = false;
             this.snakeGame.setDirection('Left');
             this.updatedDirection = true;
         } else if(this.cursors.right.isDown) {
+            this.allowDirectionChange = false;
             this.snakeGame.setDirection('Right');
             this.updatedDirection = true;
         }
@@ -124,6 +130,7 @@ export class Snake extends Scene
             {
                 this.timer = 0;
                 this.snakeGame.movePlayer();
+                this.allowDirectionChange = true;
                 const eatenApple = this.snakeGame.checkAppleCollision();
                 if(eatenApple !== false)
                 {

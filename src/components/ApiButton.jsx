@@ -35,8 +35,8 @@ const ApiButton = ({ study, editionField, updateOnSubmit, api }) => {
     case "/api/get_questions":
       buttonText = "Questions";
       break;
-    case "/api/get_raport":
-      buttonText = "Raport";
+    case "/api/get_report":
+      buttonText = "Report";
       break;
     default:
       buttonText = "?";

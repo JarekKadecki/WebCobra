@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Question = ({ question, questoinId, onAnswer }) => {
+const Question = ({ question, questionKey, onAnswer }) => {
   return (
     <div className="question-block">
       <h3>{question.title}</h3>
@@ -8,11 +8,12 @@ const Question = ({ question, questoinId, onAnswer }) => {
         <label key={idx}>
           <input
             type="radio"
-            name={questoinId}
+            name={questionKey}
             value={option}
-            onChange={() => onAnswer(question.id, option)}
-          /><br/>
+            onChange={() => onAnswer(questionKey, option)}
+          />
           {option}
+          <br />
         </label>
       ))}
     </div>

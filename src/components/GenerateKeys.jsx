@@ -51,7 +51,7 @@ const GenerateKeys = () => {
             URL.revokeObjectURL(url);
         } else if(!res.ok)
         {
-            console.error("generate_keys failed:", err);
+            console.error("generate_keys failed:");
             alert("Submission failed.");
         }
     }

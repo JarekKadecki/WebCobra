@@ -1,12 +1,12 @@
 use actix_web::{web, HttpResponse, post};
 use actix_session::Session;
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, QueryOrder, QuerySelect, Set};
-use serde_json::Value;
+use serde_json::{json, Value};
 use chrono::Utc;
 
 use crate::models::{studies, participations};
-use crate::tools::is_valid_json::is_valid_json;
-use crate::tools::role_check::{self, RoleCheck};
+use crate::tools::is_valid_json::{is_valid_json, validate_results_data};
+use crate::tools::role_check::{RoleCheck};
 
 #[post("/api/{action}")]
 pub async fn handle_api(
@@ -184,7 +184,7 @@ pub async fn handle_api(
 
         "generate_keys" => {
 
-            if let Err(e) = RoleCheck::check(&session, "student") {
+            if let Err(e) = RoleCheck::check(&session, "admin") {
                 return e.error_response();
             }
 
@@ -222,7 +222,7 @@ pub async fn handle_api(
 
         "get_keys" => {
 
-            if let Err(e) = RoleCheck::check(&session, "student") {
+            if let Err(e) = RoleCheck::check(&session, "admin") {
                 return e.error_response();
             }
             
@@ -242,7 +242,7 @@ pub async fn handle_api(
 
             let participations_list = match participations::Entity::find()
                 .filter(participations::Column::StudyId.eq(Some(study.id)))
-                .order_by_desc(participations::Column::Date)
+                .order_by_asc(participations::Column::Date)
                 .limit(count as u64)
                 .all(db.get_ref())
                 .await
@@ -285,6 +285,11 @@ pub async fn handle_api(
             let mut active_model: participations::ActiveModel = participation.into();
 
             if action == "submit_results" {
+
+                if let Err(e) = validate_results_data(&data) {
+                    return HttpResponse::BadRequest().body(e);
+                }
+
                 active_model.stats = Set(Some(data.to_string()));
                 active_model.finished = Set(Some(true));
             } else {
@@ -299,6 +304,54 @@ pub async fn handle_api(
                 }
             }
         }
+
+        "generate_report" => {
+            if let Err(e) = RoleCheck::check(&session, "admin") {
+                return e.error_response();
+            }
+
+            let study_name = data["study"].as_str().unwrap_or("").to_string();
+
+            let study = match studies::Entity::find()
+                .filter(studies::Column::Name.eq(study_name))
+                .one(db.get_ref())
+                .await
+            {
+                Ok(Some(s)) => s,
+                _ => return HttpResponse::NotFound().body("Study not found."),
+            };
+
+            let participations = participations::Entity::find()
+                .filter(participations::Column::StudyId.eq(study.id))
+                .filter(participations::Column::Finished.eq(true))
+                .all(db.get_ref())
+                .await
+                .unwrap_or_default();
+
+            let result: Vec<Value> = participations
+                .into_iter()
+                .map(|p| {
+                    let stats = p.stats
+                        .as_ref()
+                        .and_then(|s| serde_json::from_str::<Value>(s).ok())
+                        .unwrap_or_else(|| json!({}));
+
+                    let answers = p.answers
+                        .as_ref()
+                        .and_then(|s| serde_json::from_str::<Value>(s).ok())
+                        .unwrap_or_else(|| json!({}));
+
+                    json!({
+                        "hash": p.hash.unwrap_or_default(),
+                        "stats": stats,
+                        "answers": answers
+                    })
+                })
+                .collect();
+
+            HttpResponse::Ok().json(result)
+        }
+
 
         _ => HttpResponse::NotFound().body("Unknown action."),
     }

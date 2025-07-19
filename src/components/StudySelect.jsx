@@ -6,10 +6,10 @@ const StudySelect = ({ selectCallback }) => {
 
     useEffect(() => {
         const fetchStudies = async () => {
-        const res = await await fetch('/api/get_studies', {
+        const res = await fetch('/api/get_studies', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({}),
+            body: JSON.stringify({})
             });
         const data = await res.json();
         console.log(`recived studies: ${JSON.stringify(data)}.`);

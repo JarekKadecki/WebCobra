@@ -67,10 +67,16 @@ export class Outcome extends Scene
                 if(data.roundScore[data.currentRound] >= data.opponentScore)
                 {
                     data.roundOutcome[data.currentRound] = 1;
+                    data.playerPosition[data.currentRound] = data.opponentPosition;
                 }
                 else
                 {
                     data.roundOutcome[data.currentRound] = 0;
+                    if(data.currentRound == 0) {
+                        data.playerPosition[data.currentRound] = data.playerStartPosition;
+                    } else {
+                        data.playerPosition[data.currentRound] = data.playerPosition[data.currentRound-1];
+                    }
                 }
                 this.scene.start('FirstBoost', data)});
 

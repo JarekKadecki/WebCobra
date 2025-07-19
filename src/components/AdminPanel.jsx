@@ -2,6 +2,7 @@ import { useState } from 'react';
 import StudyAddRemove from './StudyAddRemove';
 import StudyEdit from './StudyEdit';
 import GenerateKeys from './GenerateKeys';
+import GenerateReport from './GenerateReport';
 
 const AdminPanel = () => {
   const [selection, setSelection] = useState();
@@ -15,13 +16,14 @@ const AdminPanel = () => {
         <button class="leftAdminPanelButtons" onClick={()=>setSelection("addRemove")}>Add/Remove study</button><br/>
         <button class="leftAdminPanelButtons" onClick={()=>setSelection("edit")}>Edit study</button><br/>
         <button class="leftAdminPanelButtons" onClick={()=>setSelection("generateKeys")}>Generate keys</button><br/>
-        <button class="leftAdminPanelButtons" onClick={()=>setSelection("generateRaport")}>Generate raport</button><br/>
+        <button class="leftAdminPanelButtons" onClick={()=>setSelection("generateReport")}>Generate Report</button><br/>
       </div>
     </div>
     <div id="centralAdminPanel">
       {selection == "addRemove" && <StudyAddRemove></StudyAddRemove>}
       {selection == "edit" && <StudyEdit></StudyEdit>}
       {selection == "generateKeys" && <GenerateKeys></GenerateKeys>}
+      {selection == "generateReport" && <GenerateReport></GenerateReport>}
     </div>
   </>
   );

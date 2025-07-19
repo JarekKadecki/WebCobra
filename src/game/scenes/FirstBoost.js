@@ -19,16 +19,12 @@ export class FirstBoost extends Scene {
 
     create(data) {
         this.cameras.main.setBackgroundColor(0x000000);
-
         this.scoreTableSize = data.scoreTableSize;
-        if(data.currentRound == 0)
-        {
-            this.currentPlayerPosition = data.playerStartPosition;
-        }
-        else
-        {
-            this.currentPlayerPosition = data.playerPosition[data.currentRound-1];
-        }
+        
+        this.purchasedBoost = 0
+
+        this.currentPlayerPosition = data.playerPosition[data.currentRound];
+        
         const sceneData = data.scenesData.FirstBoost;
 
         const topLeftText = SimpleText(this, this.scale.width * 0.3, this.scale.height * 0.1, sceneData.topLeftText)
@@ -59,6 +55,7 @@ export class FirstBoost extends Scene {
         const nextButton = Button(this, 0, 0, 'next',
             () => {
                 data.roundBoost[data.currentRound] = this.purchasedBoost;
+                this.currentPlayerPosition = scoreboardInfo.playerPosition;
                 data.playerPosition[data.currentRound] = this.currentPlayerPosition;
                 
                 data = setNextEnemy(data);
@@ -73,7 +70,14 @@ export class FirstBoost extends Scene {
                 {
                     //go to question form
                     const endGame = this.registry.get('questionnaire');
-                    endGame(data);
+                    const stats = {
+                        roundApplesSteal: data.roundApplesSteal,
+                        roundScore: data.roundScore,
+                        roundOutcome: data.roundOutcome,
+                        roundBoost: data.roundBoost,
+                        playerPosition: data.playerPosition
+                    }
+                    endGame(stats);
                 }
         });
 

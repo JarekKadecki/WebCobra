@@ -107,7 +107,10 @@ export class Preloader extends Scene
         }
 
         var data = this.registry.get('configuration');
-        data = defaultData;
+        if(!data) {
+            console.error("Could not get configuration. Loading default configuration");
+            data = defaultData;
+        }
 
         if(!data)
         {

@@ -7,6 +7,7 @@ use crate::routes::admin_login;
 use crate::routes::api;
 use crate::routes::game;
 use crate::routes::questionnaire;
+use crate::routes::style;
 use crate::routes::validate;
 
 pub fn init_routes(cfg: &mut web::ServiceConfig) {
@@ -23,4 +24,5 @@ pub fn init_routes(cfg: &mut web::ServiceConfig) {
     cfg.route("/", web::get().to(validate::validate_get));
     cfg.service(validate::validate_post);
     cfg.service(api::handle_api);
+    cfg.service(style::style_get);
 }
