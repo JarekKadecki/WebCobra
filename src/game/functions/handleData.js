@@ -5,7 +5,7 @@ export function setNextEnemy(data)
     var newData = data;
 
     if(data.roundOutcome[data.currentRound] == 1 ||
-        data.roundScore[data.currentRound] >= data.opponentScore)
+        data.roundScore[data.currentRound] > data.opponentScore)
     {
         const newOpponentImage = 'anon' + currentRound.toString();
         newData.scenesData.NextOpponent.opponentImage = newOpponentImage;
@@ -19,6 +19,12 @@ export function setNextEnemy(data)
         const newOpponentPosition = data.playerPosition[data.currentRound] ?? data.playerStartPosition;
         newData.opponentPosition = Math.ceil(newOpponentPosition*data.rankBoostFactorAfterWin);
 
+    }
+    else
+    {
+        newData.opponentScore += data.opponentScoreLoseUpgrade;
+        const newOpponentPosition = data.playerPosition[data.currentRound] ?? data.playerStartPosition;
+        newData.opponentPosition = Math.ceil(newOpponentPosition*data.rankBoostFactorAfterLoose);
     }
 
     return newData;

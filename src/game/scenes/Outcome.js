@@ -64,19 +64,13 @@ export class Outcome extends Scene
         // console.log(JSON.stringify(data))
         const nextButton = Button(this, this.scale.width*0.85, this.scale.height*0.85, 'next',
             () => {
-                if(data.roundScore[data.currentRound] >= data.opponentScore)
+                if(data.roundScore[data.currentRound] > data.opponentScore)
                 {
                     data.roundOutcome[data.currentRound] = 1;
-                    data.playerPosition[data.currentRound] = data.opponentPosition;
                 }
                 else
                 {
                     data.roundOutcome[data.currentRound] = 0;
-                    if(data.currentRound == 0) {
-                        data.playerPosition[data.currentRound] = data.playerStartPosition;
-                    } else {
-                        data.playerPosition[data.currentRound] = data.playerPosition[data.currentRound-1];
-                    }
                 }
                 this.scene.start('FirstBoost', data)});
 

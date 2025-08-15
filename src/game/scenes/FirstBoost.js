@@ -23,8 +23,15 @@ export class FirstBoost extends Scene {
         
         this.purchasedBoost = 0
 
-        this.currentPlayerPosition = data.playerPosition[data.currentRound];
+        if(data.roundOutcome[data.currentRound]) {
+            this.currentPlayerPosition = data.opponentPosition;
+        } else {
+            if(data.currentRound == 0) this.currentPlayerPosition = data.playerStartPosition;
+            else this.currentPlayerPosition = data.playerPosition[data.currentRound-1];
+        }
         
+        data.playerPosition[data.currentRound] = this.currentPlayerPosition;
+
         const sceneData = data.scenesData.FirstBoost;
 
         const topLeftText = SimpleText(this, this.scale.width * 0.3, this.scale.height * 0.1, sceneData.topLeftText)
@@ -97,23 +104,8 @@ export class FirstBoost extends Scene {
         {
             list.push(Math.floor(Math.random()*5));
         }
-        list = list.map((e) => e != 2 ? e-2 : e);
-        list.sort((a,b) => b - a);
-        
-        
 
-        if(Array.isArray(data.roundOutcome) && data.roundOutcome[data.currentRound] === 1)
-        {
-            newPlayerPosition = Math.ceil(this.currentPlayerPosition*data.rankBoostFactorAfterWin);
-        }
-        else if(data.roundOutcome[data.currentRound] == 0 && data.roundScore[data.currentRound] > opponentScore)
-        {
-            newPlayerPosition = Math.ceil(this.currentPlayerPosition*data.rankBoostFactorAfterLoose);
-        }
-        else
-        {
-            newPlayerPosition = data.playerStartPosition;
-        }
+        list.sort((a,b) => b - a);
 
         var playerInitialSpotInTable = Math.floor(data.scoreTableSize * 0.6);
         if(playerInitialSpotInTable < 7) playerInitialSpotInTable += (7-playerInitialSpotInTable);
@@ -121,9 +113,13 @@ export class FirstBoost extends Scene {
 
         for(let i=0; i<data.scoreTableSize; i++)
         {
-            if(i != playerInitialSpotInTable)
+            if(i < playerInitialSpotInTable)
             {
-                list[i] += (data.roundScore[data.currentRound] ?? 10);
+                list[i] = (data.roundScore[data.currentRound] + list[i]) ?? 10;
+            }
+            else if (i > playerInitialSpotInTable)
+            {
+                list[i] = (data.roundScore[data.currentRound] -(4 - list[i])) ?? 10;
             }
             else 
             {

@@ -71,8 +71,19 @@ export class Snake extends Scene
         this.cursors = this.input.keyboard.createCursorKeys();
 
         // setting up snake game
-        this.snakeGame = new SnakeGame(this, this.gameContainer, 300, this.gridDimetions.x, this.gridDimetions.y, this.cellSize);
-        
+        this.gamePaused = true;
+        this.snakeGame = new SnakeGame(
+            this,
+            this.gameContainer,
+            300,
+            this.gridDimetions.x,
+            this.gridDimetions.y,
+            this.cellSize
+        );
+
+        this.snakeGame.spawnPlayer();
+        this.snakeGame.spawnApples(2);
+
         if( applesStolen > 0)
         {
             this.snakeGame.score = applesStolen;
@@ -112,8 +123,6 @@ export class Snake extends Scene
             {
                 this.gamePaused = false;
                 this.gameFieldLabel.setVisible(false);
-                this.snakeGame.spawnPlayer()
-                this.snakeGame.spawnApples(2);
             }
         }
         else if(this.gameOver === true)

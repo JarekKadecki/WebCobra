@@ -63,10 +63,11 @@ export class Preloader extends Scene
     {
         const defaultData = {
             gameRounds: 3,
-            currentRound: 3,
+            currentRound: 0,
             opponentPosition: 92, //46 !6-> 40 --> 20 !6->14 --> 7 !6-> 1
             opponentScore: 20,
             opponentScoreUpgrade: 15,
+            opponentScoreLoseUpgrade: 1,
             playerStartPosition: 112,
             applesCount: 12,
             boostPrice: 5,

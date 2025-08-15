@@ -214,4 +214,14 @@ export class SnakeGame {
         this.frameTime *= 0.9;
     }
 
+    reset() {
+        this.player.forEach(p => p.rectangle.destroy());
+        this.apples.forEach(a => a.rectangle.destroy());
+        this.player = [];
+        this.apples = [];
+        this.score = 0;
+        this.direction = 'Up';
+        this.grow = false;
+    }   
+
 }

@@ -9,18 +9,19 @@ function App() {
   // Fetch the game configuration on mount
   useEffect(() => {
     const fetchConfig = async () => {
-      try {
-        const res = await fetch('/api/get_configuration', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({}),
-            });
-        if (!res.ok) throw new Error('Failed to fetch config');
-        const json = await res.json();
-        console.log('Configuration fetched:\n', JSON.stringify(json));
-        setConfigData(json);
-      } catch (err) {
-        console.error('Error fetching config:', err);
+
+      const res = await fetch('/api/get_configuration', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({}),
+          });
+        if (res.ok) {
+          const json = await res.json();
+          console.log('Configuration fetched:\n', JSON.stringify(json));
+          setConfigData(json);
+        }
+        else {
+        console.error('Error fetching config:');
       }
     };
 
