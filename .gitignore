@@ -1,0 +1,25 @@
+# === OS / Editor ===
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
+
+# === Frontend (React + Phaser) ===
+node_modules/
+dist/
+*.local
+*.env
+*.env.*
+
+# === Backend (Rust + Actix + SeaORM) ===
+backend/target/
+backend/.env
+backend/src/database/database_structure.txt
+
+# === Misc build / temp ===
+*.tmp
+.cache/
+tmp/
+
+

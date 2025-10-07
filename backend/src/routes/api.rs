@@ -138,7 +138,7 @@ pub async fn handle_api(
         
         "add_study" => {
 
-            if let Err(e) = RoleCheck::check(&session, "student") {
+            if let Err(e) = RoleCheck::check(&session, "admin") {
                 return e.error_response();
             }
 
@@ -163,7 +163,7 @@ pub async fn handle_api(
 
         "remove_study" => {
 
-            if let Err(e) = RoleCheck::check(&session, "student") {
+            if let Err(e) = RoleCheck::check(&session, "admin") {
                 return e.error_response();
             }
 
