@@ -10,8 +10,10 @@ export class NextOpponent extends Scene
         super('NextOpponent');
     }
 
-    create(data)
+    create()
     {
+        var data = this.registry.get('data');
+
         this.cameras.main.setBackgroundColor(0x000000);
 
         const sceneData = data.scenesData.NextOpponent;
@@ -28,7 +30,7 @@ export class NextOpponent extends Scene
         console.log(JSON.stringify(data));
 
         this.time.delayedCall(5000, () => {
-            this.scene.start('TakeApples', data);
+            this.scene.setNextScene(data);
         });
     }
 

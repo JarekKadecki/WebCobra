@@ -41,13 +41,46 @@ export const config = {
     ]
 };
 
+Phaser.scene.prototype.setNextScene = function(data)
+{
+    try {
+        
+        if(data.currentScene == data.gameScenes.length-1 && data.currentRound == data.gameRounds-1)
+        {
 
+            //send gameplay data on finish
+            const endGame = this.registry.get('on_game_finished');
+            //Choose which stats are about to be submitted
+            const stats = {
+                roundApplesSteal: data.roundApplesSteal,
+                roundScore: data.roundScore,
+                roundOutcome: data.roundOutcome,
+                roundBoost: data.roundBoost,
+                playerPosition: data.playerPosition
+            }
+            endGame(stats);
+        }
+        else if(data.currentRound < data.gameRounds) {
+            if(data.currentScene == data.gameScenes.length - 1) {
+                data.currentRound += 1;
+                data.currentScene = (data.currentScene + 1) % data.gameScenes.length;
+            }
+        }
+        
+        return data.gameScenes[data.currentScene];
+    }
+    catch(error) {
+        console.log(error);
+
+        return 'Preloader';
+    }
+};
 
 const StartGame = (parent, configData, gameFinish) => {
 
     const game = new Phaser.Game({ ...config, parent });
     game.registry.set('configuration', configData);
-    game.registry.set('questionnaire', gameFinish);
+    game.registry.set('on_game_finished', gameFinish);
 
     return game;
 

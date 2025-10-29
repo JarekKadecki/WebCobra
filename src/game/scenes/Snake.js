@@ -28,12 +28,14 @@ export class Snake extends Scene
         super('Snake');
     }
 
-    create(data)
+    create()
     {
+        var data = this.registry.get('data');
+        this.data = data;
+
         this.cameras.main.setBackgroundColor(0x000000);
         const gameSize = {x: this.sys.game.config.width, y: this.sys.game.config.height};
         const sceneData = data.scenesData.Snake;
-        this.data = data;
         const applesStolen = data.roundApplesSteal[data.currentRound] ?? 0;
         this.allowDirectionChange = true;
 
@@ -175,9 +177,9 @@ export class Snake extends Scene
         this.children.bringToTop(this.gameFieldLabel);
 
         this.data.roundScore[this.data.currentRound] = this.snakeGame.score;
-
+        this.registry.set('data', this.data);
         this.time.delayedCall(2000, () => {
-            this.scene.start("Outcome", this.data);
+            this.scene.setNextScene(data);
         });
     }
 

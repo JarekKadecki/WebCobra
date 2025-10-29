@@ -11,6 +11,7 @@ dist/
 *.local
 *.env
 *.env.*
+target/
 
 # === Backend (Rust + Actix + SeaORM) ===
 backend/target/

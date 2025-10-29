@@ -9,8 +9,10 @@ export class Outcome extends Scene
         super('Outcome');
     }
 
-    create (data)
+    create ()
     {
+        var data = this.registry.get('data');
+
         this.cameras.main.setBackgroundColor(0x000000);
 
         const sceneData = data.scenesData.Outcome;
@@ -72,7 +74,8 @@ export class Outcome extends Scene
                 {
                     data.roundOutcome[data.currentRound] = 0;
                 }
-                this.scene.start('FirstBoost', data)});
+                this.scene.setNextScene(data);
+            });
 
         EventBus.emit('current-scene-ready', this);
     }

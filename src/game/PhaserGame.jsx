@@ -7,7 +7,7 @@ export const PhaserGame = forwardRef(function PhaserGame({ currentActiveScene, c
     const game = useRef();
 
     useLayoutEffect(() => {
-        if (game.current === undefined && configData) {
+        if (game.current === undefined) {
             game.current = StartGame("game-container", configData, gameFinish);
 
             if (ref !== null) {

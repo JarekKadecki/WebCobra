@@ -14,8 +14,10 @@ export class TakeApples extends Scene
     applesCount = 12;
     applesStolen = 0;
 
-    create(data)
+    create()
     {
+        var data = this.registry.get('data');
+
         this.cameras.main.setBackgroundColor(0x000000);
         
         if(!("applesCount" in data)) data.applesCount = this.applesCount;
@@ -56,7 +58,8 @@ export class TakeApples extends Scene
                 data.applesCount = this.applesCount;
                 data.roundApplesSteal[data.currentRound] = this.applesStolen;
                 data.opponentScore -= this.applesStolen;
-                this.scene.start('Snake', data)});
+                this.scene.setNextScene(data);
+            });
 
         this.add.container(this.scale.width*0.9, this.scale.height/2, [nextText, nextButton])
 

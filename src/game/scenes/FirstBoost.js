@@ -17,7 +17,10 @@ export class FirstBoost extends Scene {
     recordColor = 0x303030;
     currentPlayerPosition = 112;
 
-    create(data) {
+    create() {
+
+        var data = this.registry.get('data');
+
         this.cameras.main.setBackgroundColor(0x000000);
         this.scoreTableSize = data.scoreTableSize;
         
@@ -71,20 +74,7 @@ export class FirstBoost extends Scene {
                 if(data.currentRound < data.gameRounds)
                 {
                     // pick new opponent
-                    this.scene.start('NextOpponent', data);
-                }
-                else
-                {
-                    //go to question form
-                    const endGame = this.registry.get('questionnaire');
-                    const stats = {
-                        roundApplesSteal: data.roundApplesSteal,
-                        roundScore: data.roundScore,
-                        roundOutcome: data.roundOutcome,
-                        roundBoost: data.roundBoost,
-                        playerPosition: data.playerPosition
-                    }
-                    endGame(stats);
+                    this.scene.setNextScene(data);
                 }
         });
 

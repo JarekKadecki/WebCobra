@@ -1,5 +1,4 @@
 import { Scene } from 'phaser';
-import { Outcome } from './Outcome';
 
 export class Preloader extends Scene
 {
@@ -46,8 +45,7 @@ export class Preloader extends Scene
         this.load.image('anon12', 'anon12.png');
         this.load.image('anon13', 'anon13.png');
         
-
-        this.load.image('apple', 'apple.png')
+        this.load.image('apple', 'apple.png');
         this.load.image('appleX', 'appleX.png');
         this.load.image('add', 'add.png');
         this.load.image('sub', 'sub.png');
@@ -62,8 +60,8 @@ export class Preloader extends Scene
     create ()
     {
         const defaultData = {
-            gameRounds: 3,
-            currentRound: 0,
+            gameRounds: 1,
+            gameScenes: ['NextOpponent', 'TakeApples', 'Snake', 'Outcome', 'FirstBoost', 'Questionnaire'],
             opponentPosition: 92, //46 !6-> 40 --> 20 !6->14 --> 7 !6-> 1
             opponentScore: 20,
             opponentScoreUpgrade: 15,
@@ -113,17 +111,16 @@ export class Preloader extends Scene
             data = defaultData;
         }
 
-        if(!data)
-        {
-            data = defaultData;
-        }
-
+        data.currentRound       = 0;
+        data.currentScene       = 0;
         data.roundApplesSteal   = [];
         data.roundScore         = [];
         data.roundOutcome       = [];
         data.roundBoost         = [];
         data.playerPosition     = [];
 
-        this.scene.start('NextOpponent', data);
+        this.registry.set('data', data);
+
+        this.scene.start('NextOpponent');
     }
 }
