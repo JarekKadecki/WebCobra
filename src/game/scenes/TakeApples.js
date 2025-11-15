@@ -56,7 +56,7 @@ export class TakeApples extends Scene
         const nextButton = Button(this, 0, 0, 'next',
             () => {
                 data.applesCount = this.applesCount;
-                data.roundApplesSteal[data.currentRound] = this.applesStolen;
+                data.roundApplesSteal.push(this.applesStolen);
                 data.opponentScore -= this.applesStolen;
                 this.scene.setNextScene(data);
             });

@@ -3,6 +3,7 @@ import { FirstBoost } from './scenes/FirstBoost';
 import { NextOpponent } from './scenes/NextOpponent';
 import { Outcome } from './scenes/Outcome';
 import { Preloader } from './scenes/Preloader';
+import { Questionnaire } from './scenes/Questionnaire';
 import { Snake } from './scenes/Snake';
 import { TakeApples } from './scenes/TakeApples';
 
@@ -37,7 +38,8 @@ export const config = {
         Snake,
         TakeApples,
         Outcome,
-        FirstBoost
+        FirstBoost,
+        Questionnaire
     ]
 };
 
@@ -56,7 +58,8 @@ Phaser.scene.prototype.setNextScene = function(data)
                 roundScore: data.roundScore,
                 roundOutcome: data.roundOutcome,
                 roundBoost: data.roundBoost,
-                playerPosition: data.playerPosition
+                playerPosition: data.playerPosition,
+                answers: data.answers
             }
             endGame(stats);
         }

@@ -176,7 +176,7 @@ export class Snake extends Scene
         this.gameFieldLabel.setText("Game Over");
         this.children.bringToTop(this.gameFieldLabel);
 
-        this.data.roundScore[this.data.currentRound] = this.snakeGame.score;
+        this.data.roundScore.push(this.snakeGame.score);
         this.registry.set('data', this.data);
         this.time.delayedCall(2000, () => {
             this.scene.setNextScene(data);

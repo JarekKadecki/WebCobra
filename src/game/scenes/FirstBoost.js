@@ -26,14 +26,14 @@ export class FirstBoost extends Scene {
         
         this.purchasedBoost = 0
 
-        if(data.roundOutcome[data.currentRound]) {
+        if(data.roundOutcome.at(-1)) {
             this.currentPlayerPosition = data.opponentPosition;
         } else {
             if(data.currentRound == 0) this.currentPlayerPosition = data.playerStartPosition;
-            else this.currentPlayerPosition = data.playerPosition[data.currentRound-1];
+            else this.currentPlayerPosition = data.playerPosition.at(-2);
         }
         
-        data.playerPosition[data.currentRound] = this.currentPlayerPosition;
+        data.playerPosition.push(this.currentPlayerPosition);
 
         const sceneData = data.scenesData.FirstBoost;
 
@@ -64,9 +64,9 @@ export class FirstBoost extends Scene {
 
         const nextButton = Button(this, 0, 0, 'next',
             () => {
-                data.roundBoost[data.currentRound] = this.purchasedBoost;
+                data.roundBoost.push(this.purchasedBoost);
                 this.currentPlayerPosition = scoreboardInfo.playerPosition;
-                data.playerPosition[data.currentRound] = this.currentPlayerPosition;
+                data.playerPosition[data.playerPosition.length-1] = this.currentPlayerPosition;
                 
                 data = setNextEnemy(data);
                 data = setNextRound(data);
@@ -105,15 +105,15 @@ export class FirstBoost extends Scene {
         {
             if(i < playerInitialSpotInTable)
             {
-                list[i] = (data.roundScore[data.currentRound] + list[i]) ?? 10;
+                list[i] = (data.roundScore.at(-1) + list[i]) ?? 10;
             }
             else if (i > playerInitialSpotInTable)
             {
-                list[i] = (data.roundScore[data.currentRound] -(4 - list[i])) ?? 10;
+                list[i] = (data.roundScore.at(-1) -(4 - list[i])) ?? 10;
             }
             else 
             {
-                list[i] = data.roundScore[data.currentRound] ?? 10;
+                list[i] = data.roundScore.at(-1) ?? 10;
             }
         }
 

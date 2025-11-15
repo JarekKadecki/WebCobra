@@ -5,14 +5,14 @@ export function setNextEnemy(data)
     var newData = data;
 
     if(data.roundOutcome[data.currentRound] == 1 ||
-        data.roundScore[data.currentRound] > data.opponentScore)
+        data.roundScore.at(-1) > data.opponentScore)
     {
         const newOpponentImage = 'anon' + currentRound.toString();
         newData.scenesData.NextOpponent.opponentImage = newOpponentImage;
         newData.scenesData.Snake.opponentImage = newOpponentImage;
         newData.scenesData.Outcome.opponentImage = newOpponentImage;
 
-        const newOpponentScore =  data.roundScore[data.currentRound] + 
+        const newOpponentScore =  data.roundScore.at(-1) + 
                                 data.opponentScoreUpgrade;
         newData.opponentScore = newOpponentScore;
 

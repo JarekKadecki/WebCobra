@@ -102,7 +102,52 @@ export class Preloader extends Scene
                     topRightText: 'Scoreboard',
                     bottomRightText: 'Proceed',
                 }
-            }
+            },
+            questionnaires:
+            [
+                [
+                    {
+                        title: "1. What is the answer to question1?",
+                        answers: ["q1_answer1", "q1_answer2", "q1_answer3", "q1_answer4"]
+                    },
+                    {
+                        title: "1. What is the answer to question2?",
+                        answers: ["q2_answer1", "q2_answer2", "q2_answer3", "q2_answer4"]
+                    },
+                    {
+                        title: "1. What is the answer to question3?",
+                        answers: ["q3_answer1", "q3_answer2", "q3_answer3", "q3_answer4"]
+                    }
+                ],
+                [
+                    {
+                        title: "2. What is the answer to question1?",
+                        answers: ["q1_answer1", "q1_answer2", "q1_answer3", "q1_answer4"]
+                    },
+                    {
+                        title: "2. What is the answer to question2?",
+                        answers: ["q2_answer1", "q2_answer2", "q2_answer3", "q2_answer4"]
+                    },
+                    {
+                        title: "2. What is the answer to question3?",
+                        answers: ["q3_answer1", "q3_answer2", "q3_answer3", "q3_answer4"]
+                    }
+                ],
+                [
+                    {
+                        title: "3. What is the answer to question1?",
+                        answers: ["q1_answer1", "q1_answer2", "q1_answer3", "q1_answer4"]
+                    },
+                    {
+                        title: "3. What is the answer to question2?",
+                        answers: ["q2_answer1", "q2_answer2", "q2_answer3", "q2_answer4"]
+                    },
+                    {
+                        title: "3. What is the answer to question3?",
+                        answers: ["q3_answer1", "q3_answer2", "q3_answer3", "q3_answer4"]
+                    }
+                ],
+            ]
         }
 
         var data = this.registry.get('configuration');
@@ -113,11 +158,13 @@ export class Preloader extends Scene
 
         data.currentRound       = 0;
         data.currentScene       = 0;
+        data.currentQuestionnaire = 0;
         data.roundApplesSteal   = [];
         data.roundScore         = [];
         data.roundOutcome       = [];
         data.roundBoost         = [];
         data.playerPosition     = [];
+        data.answers            = [];
 
         this.registry.set('data', data);
 
