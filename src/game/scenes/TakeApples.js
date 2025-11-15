@@ -58,7 +58,7 @@ export class TakeApples extends Scene
                 data.applesCount = this.applesCount;
                 data.roundApplesSteal.push(this.applesStolen);
                 data.opponentScore -= this.applesStolen;
-                this.scene.setNextScene(data);
+                this.setNextScene(data);
             });
 
         this.add.container(this.scale.width*0.9, this.scale.height/2, [nextText, nextButton])

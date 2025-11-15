@@ -36,7 +36,7 @@ export class Snake extends Scene
         this.cameras.main.setBackgroundColor(0x000000);
         const gameSize = {x: this.sys.game.config.width, y: this.sys.game.config.height};
         const sceneData = data.scenesData.Snake;
-        const applesStolen = data.roundApplesSteal[data.currentRound] ?? 0;
+        const applesStolen = data.roundApplesSteal.at(-1) ?? 0;
         this.allowDirectionChange = true;
 
         //setting oponent info panel
@@ -179,7 +179,7 @@ export class Snake extends Scene
         this.data.roundScore.push(this.snakeGame.score);
         this.registry.set('data', this.data);
         this.time.delayedCall(2000, () => {
-            this.scene.setNextScene(data);
+            this.setNextScene(this.data);
         });
     }
 

@@ -15,11 +15,14 @@ export class Questionnaire extends Scene
 
         EventBus.emit('current-scene-ready', this);
 
-        let questions = data.questions[data.currentQuestionnaire];
+        let questions = data.questionnaires[data.currentQuestionnaire];
 
         EventBus.emit('show-questionnaire', questions, this);
 
-        data.currentQuestionnaire += 1;
+        console.log(`Showing questionnaire ${data.currentQuestionnaire}`);
+        
+        data.currentQuestionnaire = (data.currentQuestionnaire + 1) % data.questionnaires.length;
+
     }
 
 }

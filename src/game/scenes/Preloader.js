@@ -60,8 +60,9 @@ export class Preloader extends Scene
     create ()
     {
         const defaultData = {
-            gameRounds: 1,
+            gameRounds: 2,
             gameScenes: ['NextOpponent', 'TakeApples', 'Snake', 'Outcome', 'FirstBoost', 'Questionnaire'],
+            // gameScenes: ['Questionnaire', 'NextOpponent'],
             opponentPosition: 92, //46 !6-> 40 --> 20 !6->14 --> 7 !6-> 1
             opponentScore: 20,
             opponentScoreUpgrade: 15,
@@ -168,6 +169,6 @@ export class Preloader extends Scene
 
         this.registry.set('data', data);
 
-        this.scene.start('NextOpponent');
+        this.scene.start(data.gameScenes[data.currentScene]);
     }
 }

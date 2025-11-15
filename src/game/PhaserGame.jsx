@@ -3,6 +3,7 @@ import { forwardRef, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import StartGame from './main';
 import { EventBus } from './EventBus';
 import QuestionnaireForm from '../components/QuestionnaireForm';
+import { printData } from './functions/tools';
 export const PhaserGame = forwardRef(function PhaserGame({ currentActiveScene, configData, gameFinish }, ref) {
     const [showQuestionnaire, setShowQuestionnaire] = useState(false);
     const [questionnaireQuestions, setQuestionnaireQuestions] = useState([]);
@@ -38,13 +39,15 @@ export const PhaserGame = forwardRef(function PhaserGame({ currentActiveScene, c
         };
 
         const handleHideQuestionnaire = (answers) => {
-            setShowQuestionnaire(false);
             if (questionnaireScene.current) {
                 const data = questionnaireScene.current.registry.get('data');
                 data.answers.push(answers);
+                printData(data);
+                questionnaireScene.current.setNextScene(data)
             } else {
                 console.error("Could not process answers — no scene reference");
             }
+            setShowQuestionnaire(false);
         };
 
         EventBus.on('current-scene-ready', handleSceneReady);
@@ -62,10 +65,11 @@ export const PhaserGame = forwardRef(function PhaserGame({ currentActiveScene, c
         <>
             <div id="game-container"></div>
             {showQuestionnaire && (
-                <Questionnaire questions={questionnaireQuestions} />
+                <QuestionnaireForm questions={questionnaireQuestions} />
             )}
         </>
     );
+
 });
 
 PhaserGame.propTypes = {

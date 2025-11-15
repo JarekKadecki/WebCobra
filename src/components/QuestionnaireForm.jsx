@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Question from './Question';
-import { EventBus } from '../EventBus';
+import { EventBus } from '../game/EventBus';
 
 const Questionnaire = ({ questions = [] }) => {
   const [answers, setAnswers] = useState({});

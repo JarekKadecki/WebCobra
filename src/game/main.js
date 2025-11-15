@@ -43,7 +43,7 @@ export const config = {
     ]
 };
 
-Phaser.scene.prototype.setNextScene = function(data)
+Phaser.Scene.prototype.setNextScene = function(data)
 {
     try {
         
@@ -66,16 +66,17 @@ Phaser.scene.prototype.setNextScene = function(data)
         else if(data.currentRound < data.gameRounds) {
             if(data.currentScene == data.gameScenes.length - 1) {
                 data.currentRound += 1;
-                data.currentScene = (data.currentScene + 1) % data.gameScenes.length;
             }
+            data.currentScene = (data.currentScene + 1) % data.gameScenes.length;
+            console.log(`Loading scene ${data.currentScene}`);
         }
         
-        return data.gameScenes[data.currentScene];
+        this.scene.start(data.gameScenes[data.currentScene]);
     }
     catch(error) {
         console.log(error);
 
-        return 'Preloader';
+        // this.scene.start('Preloader');
     }
 };
 

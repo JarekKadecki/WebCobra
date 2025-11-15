@@ -74,7 +74,7 @@ export class Outcome extends Scene
                 {
                     data.roundOutcome.push(0);
                 }
-                this.scene.setNextScene(data);
+                this.setNextScene(data);
             });
 
         EventBus.emit('current-scene-ready', this);

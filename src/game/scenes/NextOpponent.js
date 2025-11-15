@@ -1,6 +1,7 @@
 import { EventBus } from '../EventBus';
 import { Scene } from 'phaser';
 import { SimpleText } from '../functions/components';
+import { printData } from '../functions/tools';
 
 
 export class NextOpponent extends Scene
@@ -27,10 +28,10 @@ export class NextOpponent extends Scene
 
         EventBus.emit('current-scene-ready', this);
 
-        console.log(JSON.stringify(data));
+        printData(data);
 
         this.time.delayedCall(5000, () => {
-            this.scene.setNextScene(data);
+            this.setNextScene(data);
         });
     }
 

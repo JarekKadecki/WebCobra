@@ -69,12 +69,12 @@ export class FirstBoost extends Scene {
                 data.playerPosition[data.playerPosition.length-1] = this.currentPlayerPosition;
                 
                 data = setNextEnemy(data);
-                data = setNextRound(data);
+                // data = setNextRound(data);
 
                 if(data.currentRound < data.gameRounds)
                 {
                     // pick new opponent
-                    this.scene.setNextScene(data);
+                    this.setNextScene(data);
                 }
         });
 
