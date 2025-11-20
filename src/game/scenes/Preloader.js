@@ -87,6 +87,12 @@ export class Preloader extends Scene
                 //     },
                 // },
                 {
+                    name: 'TextScene',
+                        sceneData: {
+                        text: "tekst"
+                    },
+                },
+                {
                     name: 'FixedSnake',
                     sceneData: {
                         topOpponentText: 'Your opponent',

@@ -7,6 +7,7 @@ import { Questionnaire } from './scenes/Questionnaire';
 import { Snake } from './scenes/Snake';
 import { FixedSnake } from './scenes/FixedSnake';
 import { TakeApples } from './scenes/TakeApples';
+import { TextScene } from './scenes/TextScene';
 
 export const config = {
     type: Phaser.AUTO,
@@ -41,7 +42,8 @@ export const config = {
         TakeApples,
         Outcome,
         FirstBoost,
-        Questionnaire
+        Questionnaire,
+        TextScene
     ]
 };
 
