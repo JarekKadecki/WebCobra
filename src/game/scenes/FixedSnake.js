@@ -5,14 +5,14 @@ import { drawApples } from '../functions/draw';
 import { SimpleText } from '../functions/components';
 
 
-export class Snake extends Scene
+export class FixedSnake extends Scene
 {
     gridDimetions = {x: 32, y: 18};
     cellSize = 40*0.7;
     snakeGame = null;
     gameField = null;
     gameFieldLabel = null;
-    scoreLabel = null;
+    promptLabel = null;
     cursors = null;
     gamePaused = true;
     gameOver = false;
@@ -21,11 +21,12 @@ export class Snake extends Scene
     data = null;
     gameContainer = null;
     allowDirectionChange = true;
+    sceneData = null;
 
 
     constructor ()
     {
-        super('Snake');
+        super('FixedSnake');
     }
 
     create()
@@ -35,7 +36,7 @@ export class Snake extends Scene
 
         this.cameras.main.setBackgroundColor(0x000000);
         const gameSize = {x: this.sys.game.config.width, y: this.sys.game.config.height};
-        const sceneData = data.gameScenes.filter((d) => d.name == 'Snake')[0].sceneData;
+        this.sceneData = data.gameScenes.filter((d) => d.name == 'FixedSnake')[0].sceneData;
         const applesStolen = data.roundApplesSteal.at(-1) ?? 0;
         this.allowDirectionChange = true;
 
@@ -43,10 +44,10 @@ export class Snake extends Scene
         const opponentImage = this.add.image(0, 0, data.opponentImage)
             .setOrigin(0.5);
 
-        const upperOpponentText = SimpleText(this, 0, -300, sceneData.topOpponentText)
+        const upperOpponentText = SimpleText(this, 0, -300, this.sceneData.topOpponentText)
             .setOrigin(0.5);
 
-        const lowerOpponentText = SimpleText(this, 0, 300, sceneData.bottomOpponentText + ` rank ${data.opponentPosition}, score ${data.opponentScore}`,
+        const lowerOpponentText = SimpleText(this, 0, 300, this.sceneData.bottomOpponentText + ` rank ${data.opponentPosition}`,
             {fontSize: 38}).setOrigin(0.5);
 
         const applePanel = drawApples(this, data.applesCount, applesStolen, 1, 50);
@@ -61,13 +62,12 @@ export class Snake extends Scene
             this.cellSize*this.gridDimetions.x, this.cellSize*this.gridDimetions.y, 0x505050).setOrigin(0);
             
         this.gameFieldLabel = SimpleText(this, this.gameField.width/2, this.gameField.height/2,
-            sceneData.gameFieldText, {fontSize: 38}).setOrigin(0.5);        
+            this.sceneData.gameFieldText, {fontSize: 38}).setOrigin(0.5);        
                         
-        this.scoreLabel = SimpleText(this, this.gameField.width/2, -20,
-            sceneData.scoreText, {fontSize: 30}).setOrigin(0.5);
+        this.promptLabel = SimpleText(this, this.gameField.width/2, -20,
+            "", {fontSize: 30}).setOrigin(0.5);
             
-        console.log(`${data.applesCount} ${applesStolen}`);
-        this.gameContainer = this.add.container(0, gameSize.y*0.15, [this.gameField, this.gameFieldLabel, this.scoreLabel]);
+        this.gameContainer = this.add.container(0, gameSize.y*0.15, [this.gameField, this.gameFieldLabel, this.promptLabel]);
             
         //setting up keyboard input handling
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -84,12 +84,11 @@ export class Snake extends Scene
         );
 
         this.snakeGame.spawnPlayer();
-        this.snakeGame.spawnApples(2);
+        this.snakeGame.spawnApples(this.sceneData.apples);
 
         if( applesStolen > 0)
         {
             this.snakeGame.score = applesStolen;
-            this.scoreLabel.setText(`Score: ${this.snakeGame.score}`);
         }
 
         this.input.enabled = true;
@@ -150,7 +149,11 @@ export class Snake extends Scene
                     this.snakeGame.removeApple(eatenApple);
                     this.snakeGame.grow = true;
                     this.snakeGame.score += 1;
-                    this.scoreLabel.setText(`Score: ${this.snakeGame.score}`);
+
+                    if(this.sceneData.promptTrigger == this.snakeGame.score) {
+                        this.promptLabel.setText(this.sceneData.promptText);
+                    }
+
                     this.snakeGame.spawnApples(1);
                 }
                 
@@ -178,14 +181,7 @@ export class Snake extends Scene
 
         this.data.roundScore.push(this.snakeGame.score);
 
-        if(this.data.roundScore.at(-1) > data.opponentScore)
-        {
-            this.data.roundOutcome.push(1);
-        }
-        else
-        {
-            this.data.roundOutcome.push(0);
-        }
+        this.data.roundOutcome.push(this.sceneData.outcome);
 
         this.registry.set('data', this.data);
         this.time.delayedCall(2000, () => {

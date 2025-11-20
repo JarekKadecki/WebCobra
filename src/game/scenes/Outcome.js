@@ -18,7 +18,12 @@ export class Outcome extends Scene
         const sceneData = data.gameScenes.filter((d) => d.name == 'Outcome')[0].sceneData;
 
         // if(data.applesStolen == undefined) data = {applesStolen: 3, applesCount: 4};
-        const balance = data.roundScore.at(-1)/data.opponentScore;
+        var balance = data.roundScore.at(-1)/data.opponentScore;
+
+        if(data.roundOutcome.length > 0 && 
+            ((data.roundOutcome.at(-1) == 1 && balance < 1) || (data.roundOutcome.at(-1) == 0 && balance > 1))){
+            balance = data.opponentScore/data.roundScore.at(-1);
+        }
 
         const youImage = this.add.image(0, 0, sceneData.playerImage).setScale(0.5);
 
@@ -66,14 +71,6 @@ export class Outcome extends Scene
         // console.log(JSON.stringify(data))
         const nextButton = Button(this, this.scale.width*0.85, this.scale.height*0.85, 'next',
             () => {
-                if(data.roundScore.at(-1) > data.opponentScore)
-                {
-                    data.roundOutcome.push(1);
-                }
-                else
-                {
-                    data.roundOutcome.push(0);
-                }
                 this.setNextScene(data);
             });
 

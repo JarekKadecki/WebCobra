@@ -93,12 +93,13 @@ export class Preloader extends Scene
                         bottomOpponentText: 'Opponent',
                         gameFieldText: 'Press UP to start',
                         promptText: 'You are very close!',
-                        apples: 20,
-                        promtTrigger: 20
+                        outcome: 1,
+                        apples: 10,
+                        promptTrigger: 10
                     },
                 }, 
                 {
-                    name: 'Outocome',
+                    name: 'Outcome',
                         sceneData: {
                         playerImage: 'you',
                         leftText: 'You',

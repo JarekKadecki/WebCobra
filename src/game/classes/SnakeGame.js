@@ -211,7 +211,7 @@ export class SnakeGame {
 
     speedUp()
     {
-        this.frameTime *= 0.9;
+        this.frameTime *= 0.95;
     }
 
     reset() {

@@ -4,10 +4,9 @@ export function setNextEnemy(data)
 
     var newData = data;
 
-    if(data.roundOutcome[data.currentRound] == 1 ||
-        data.roundScore.at(-1) > data.opponentScore)
+    if(data.roundOutcome.at(-1) == 1)
     {
-        const newOpponentImage = 'anon' + currentRound.toString();
+        const newOpponentImage = 'anon' + data.roundOutcome.length.toString();
         newData.opponentImage = newOpponentImage;
 
         const newOpponentScore =  data.roundScore.at(-1) + 
