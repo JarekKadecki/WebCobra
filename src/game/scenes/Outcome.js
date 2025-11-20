@@ -15,7 +15,7 @@ export class Outcome extends Scene
 
         this.cameras.main.setBackgroundColor(0x000000);
 
-        const sceneData = data.scenesData.Outcome;
+        const sceneData = data.gameScenes.filter((d) => d.name == 'Outcome')[0].sceneData;
 
         // if(data.applesStolen == undefined) data = {applesStolen: 3, applesCount: 4};
         const balance = data.roundScore.at(-1)/data.opponentScore;
@@ -27,7 +27,7 @@ export class Outcome extends Scene
 
         this.add.container(200, this.scale.height/2, [youImage, youLabel]);
 
-        const opponentImage = this.add.image(0, 0, sceneData.opponentImage).setScale(0.5);
+        const opponentImage = this.add.image(0, 0, data.opponentImage).setScale(0.5);
 
         const opponentLabel = SimpleText(this, 0, 150, sceneData.rightText,
             {fontSize: 32}).setOrigin(0.5);

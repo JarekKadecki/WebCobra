@@ -17,9 +17,9 @@ export class NextOpponent extends Scene
 
         this.cameras.main.setBackgroundColor(0x000000);
 
-        const sceneData = data.scenesData.NextOpponent;
+        const sceneData = data.gameScenes.filter((d) => d.name == 'NextOpponent')[0].sceneData;
 
-        this.add.image(this.scale.width*0.5, this.scale.height*0.5, sceneData.opponentImage);
+        this.add.image(this.scale.width*0.5, this.scale.height*0.5, data.opponentImage);
         
         const topText = SimpleText(this, this.scale.width*0.5, 100, sceneData.topText + ` rank ${data.opponentPosition}, score ${data.opponentScore}`)
             .setOrigin();

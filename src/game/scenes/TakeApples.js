@@ -25,7 +25,7 @@ export class TakeApples extends Scene
 
         this.applesStolen = 0;
 
-        const sceneData = data.scenesData.TakeApples;
+        const sceneData = data.gameScenes.filter((d) => d.name == 'TakeApples')[0].sceneData;
 
         const titleLabel = SimpleText(this, 175, -120, sceneData.topText).setOrigin(0.5);
 

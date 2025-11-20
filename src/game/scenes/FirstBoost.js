@@ -35,7 +35,7 @@ export class FirstBoost extends Scene {
         
         data.playerPosition.push(this.currentPlayerPosition);
 
-        const sceneData = data.scenesData.FirstBoost;
+        const sceneData = data.gameScenes.filter((d) => d.name == 'FirstBoost')[0].sceneData;
 
         const topLeftText = SimpleText(this, this.scale.width * 0.3, this.scale.height * 0.1, sceneData.topLeftText)
             .setOrigin(0.5);

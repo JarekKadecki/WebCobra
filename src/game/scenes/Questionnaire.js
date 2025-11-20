@@ -12,10 +12,11 @@ export class Questionnaire extends Scene
     create()
     {
         var data = this.registry.get('data');
+        
+        const sceneData = data.gameScenes.filter((d) => d.name == 'Questionnaire')[0].sceneData;
 
+        
         EventBus.emit('current-scene-ready', this);
-
-        let questions = data.questionnaires[data.currentQuestionnaire];
 
         EventBus.emit('show-questionnaire', questions, this);
 

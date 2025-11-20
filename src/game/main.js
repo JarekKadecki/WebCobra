@@ -5,6 +5,7 @@ import { Outcome } from './scenes/Outcome';
 import { Preloader } from './scenes/Preloader';
 import { Questionnaire } from './scenes/Questionnaire';
 import { Snake } from './scenes/Snake';
+import { FixedSnake } from './scenes/FixedSnake';
 import { TakeApples } from './scenes/TakeApples';
 
 export const config = {
@@ -36,6 +37,7 @@ export const config = {
         Preloader,
         NextOpponent,
         Snake,
+        FixedSnake,
         TakeApples,
         Outcome,
         FirstBoost,
@@ -71,7 +73,7 @@ Phaser.Scene.prototype.setNextScene = function(data)
             console.log(`Loading scene ${data.currentScene}`);
         }
         
-        this.scene.start(data.gameScenes[data.currentScene]);
+        this.scene.start(data.gameScenes[data.currentScene].name);
     }
     catch(error) {
         console.log(error);

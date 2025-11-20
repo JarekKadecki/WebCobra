@@ -35,12 +35,12 @@ export class Snake extends Scene
 
         this.cameras.main.setBackgroundColor(0x000000);
         const gameSize = {x: this.sys.game.config.width, y: this.sys.game.config.height};
-        const sceneData = data.scenesData.Snake;
+        const sceneData = data.gameScenes.filter((d) => d.name == 'Snake')[0].sceneData;
         const applesStolen = data.roundApplesSteal.at(-1) ?? 0;
         this.allowDirectionChange = true;
 
         //setting oponent info panel
-        const opponentImage = this.add.image(0, 0, sceneData.opponentImage)
+        const opponentImage = this.add.image(0, 0, data.opponentImage)
             .setOrigin(0.5);
 
         const upperOpponentText = SimpleText(this, 0, -300, sceneData.topOpponentText)
