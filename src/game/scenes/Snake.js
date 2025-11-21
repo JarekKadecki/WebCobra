@@ -3,6 +3,7 @@ import { Scene } from 'phaser';
 import { SnakeGame } from '../classes/SnakeGame';
 import { drawApples } from '../functions/draw';
 import { SimpleText } from '../functions/components';
+import { retriveSceneData } from '../functions/handleData';
 
 
 export class Snake extends Scene
@@ -35,7 +36,7 @@ export class Snake extends Scene
 
         this.cameras.main.setBackgroundColor(0x000000);
         const gameSize = {x: this.sys.game.config.width, y: this.sys.game.config.height};
-        const sceneData = data.gameScenes.filter((d) => d.name == 'Snake')[0].sceneData;
+        const sceneData = retriveSceneData(data, 'Snake');
         const applesStolen = data.roundApplesSteal.at(-1) ?? 0;
         this.allowDirectionChange = true;
 

@@ -1,6 +1,7 @@
 import { EventBus } from '../EventBus';
 import { Scene } from 'phaser';
 import { Button } from '../functions/components';
+import { retriveSceneData } from '../functions/handleData';
 
 export class TextScene extends Scene
 {
@@ -14,7 +15,7 @@ export class TextScene extends Scene
         const data = this.registry.get('data');
         this.cameras.main.setBackgroundColor(0x000000);
 
-        const sceneData = data.gameScenes.filter((d) => d.name === 'TextScene')[0].sceneData;
+        const sceneData = retriveSceneData(data, 'TextScene');
 
         const screenW = this.scale.width;
         const screenH = this.scale.height;

@@ -1,7 +1,7 @@
 import { EventBus } from '../EventBus';
 import { Scene } from 'phaser';
 import { Button, SimpleText } from '../functions/components';
-import { setNextEnemy, setNextRound } from '../functions/handleData';
+import { retriveSceneData, setNextEnemy, setNextRound } from '../functions/handleData';
 
 export class FirstBoost extends Scene {
     constructor() {
@@ -35,7 +35,7 @@ export class FirstBoost extends Scene {
         
         data.playerPosition.push(this.currentPlayerPosition);
 
-        const sceneData = data.gameScenes.filter((d) => d.name == 'FirstBoost')[0].sceneData;
+        const sceneData = retriveSceneData(data, 'FirstBoost');
 
         const topLeftText = SimpleText(this, this.scale.width * 0.3, this.scale.height * 0.1, sceneData.topLeftText)
             .setOrigin(0.5);

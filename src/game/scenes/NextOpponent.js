@@ -2,6 +2,7 @@ import { EventBus } from '../EventBus';
 import { Scene } from 'phaser';
 import { SimpleText } from '../functions/components';
 import { printData } from '../functions/tools';
+import { retriveSceneData } from '../functions/handleData';
 
 
 export class NextOpponent extends Scene
@@ -17,7 +18,7 @@ export class NextOpponent extends Scene
 
         this.cameras.main.setBackgroundColor(0x000000);
 
-        const sceneData = data.gameScenes.filter((d) => d.name == 'NextOpponent')[0].sceneData;
+        const sceneData = retriveSceneData(data, 'NextOpponent');
 
         this.add.image(this.scale.width*0.5, this.scale.height*0.5, data.opponentImage);
         

@@ -2,6 +2,7 @@ import { EventBus } from '../EventBus';
 import { Scene } from 'phaser';
 import { drawApples } from '../functions/draw';
 import { Button, SimpleText } from '../functions/components';
+import { retriveSceneData } from '../functions/handleData';
 
 
 export class TakeApples extends Scene
@@ -25,7 +26,7 @@ export class TakeApples extends Scene
 
         this.applesStolen = 0;
 
-        const sceneData = data.gameScenes.filter((d) => d.name == 'TakeApples')[0].sceneData;
+        const sceneData = retriveSceneData(data, 'TakeApples');
 
         const titleLabel = SimpleText(this, 175, -120, sceneData.topText).setOrigin(0.5);
 

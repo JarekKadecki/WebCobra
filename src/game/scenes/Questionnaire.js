@@ -1,5 +1,6 @@
 import { EventBus } from '../EventBus';
 import { Scene } from 'phaser';
+import { retriveSceneData } from '../functions/handleData';
 
 
 export class Questionnaire extends Scene
@@ -13,16 +14,12 @@ export class Questionnaire extends Scene
     {
         var data = this.registry.get('data');
         
-        const sceneData = data.gameScenes.filter((d) => d.name == 'Questionnaire')[0].sceneData;
+        const sceneData = retriveSceneData(data, 'Questionnaire');
 
+        
+        EventBus.emit('show-questionnaire', sceneData.questions, this);
         
         EventBus.emit('current-scene-ready', this);
-
-        EventBus.emit('show-questionnaire', questions, this);
-
-        console.log(`Showing questionnaire ${data.currentQuestionnaire}`);
-        
-        data.currentQuestionnaire = (data.currentQuestionnaire + 1) % data.questionnaires.length;
 
     }
 

@@ -1,6 +1,7 @@
 import { EventBus } from '../EventBus';
 import { Scene } from 'phaser';
 import { Button, SimpleText } from '../functions/components';
+import { retriveSceneData } from '../functions/handleData';
 
 export class Outcome extends Scene
 {
@@ -15,7 +16,7 @@ export class Outcome extends Scene
 
         this.cameras.main.setBackgroundColor(0x000000);
 
-        const sceneData = data.gameScenes.filter((d) => d.name == 'Outcome')[0].sceneData;
+        const sceneData = retriveSceneData(data, 'Outcome');
 
         // if(data.applesStolen == undefined) data = {applesStolen: 3, applesCount: 4};
         var balance = data.roundScore.at(-1)/data.opponentScore;
