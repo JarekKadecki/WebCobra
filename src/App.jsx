@@ -38,7 +38,8 @@ function App() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
-    window.location.href = '/questionnaire';
+
+    alert("Study finished");
   };
 
   return (

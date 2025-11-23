@@ -26,7 +26,7 @@ export default defineConfig({
             input: {
                 main: resolve(__dirname, '../index.html'),
                 validate: resolve(__dirname, '../static/validate.html'),
-                questionnaire: resolve(__dirname, '../static/questionnaire.html'),
+                // questionnaire: resolve(__dirname, '../static/questionnaire.html'),
                 admin: resolve(__dirname, '../static/admin.html'),
                 adminLogin: resolve(__dirname, '../static/adminLogin.html')
             },

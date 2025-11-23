@@ -107,3 +107,25 @@ button[type=submit] {
 form {
   text-align: center;
 }
+
+#questionnaire-box {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    background: black;
+
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+
+    overflow-y: auto; /* the magic */
+
+    padding: 40px 0;
+
+    z-index: 99999;
+}
+

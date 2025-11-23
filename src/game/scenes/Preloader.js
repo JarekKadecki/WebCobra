@@ -62,21 +62,21 @@ export class Preloader extends Scene
         const defaultData = {
             gameRounds: 2,
             gameScenes: [
-                // {
-                //     name: 'NextOpponent',
-                //     sceneData: {
-                //             topText: 'Next opponent:',
-                //             bottomText: 'Opponent'
-                //     },
-                // }, 
-                // {
-                //     name: 'TakeApples',
-                //     sceneData: {
-                //         topText: 'Taking away 0 apples from opponent.',
-                //         leftText: 'Take apples\nfrom you opponent:',
-                //         rightText: 'Proceed'
-                //     },
-                // }, 
+                {
+                    name: 'NextOpponent',
+                    sceneData: {
+                            topText: 'Next opponent:',
+                            bottomText: 'Opponent'
+                    },
+                }, 
+                {
+                    name: 'TakeApples',
+                    sceneData: {
+                        topText: 'Taking away 0 apples from opponent.',
+                        leftText: 'Take apples\nfrom you opponent:',
+                        rightText: 'Proceed'
+                    },
+                }, 
                 // {
                 //     name: 'Snake',
                 //     sceneData: {

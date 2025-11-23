@@ -1,17 +1,16 @@
 export function generateReport(data) {
     if (!data || !Array.isArray(data)) return '';
 
-    // Collect all unique answer keys (questions)
     const answerKeys = new Set();
     const statKeys = new Set();
 
+    // Collect columns
     data.forEach(item => {
-        const answers = item.answers || {};
-        Object.keys(answers).forEach(key => answerKeys.add(key));
+        const answers = (item.answers && typeof item.answers === 'object') ? item.answers : {};
+        Object.keys(answers).forEach(k => answerKeys.add(k));
 
         const stats = item.stats || {};
         Object.keys(stats).forEach(statKey => {
-            // if value is array -> expand keys like key0, key1
             const value = stats[statKey];
             if (Array.isArray(value)) {
                 value.forEach((_, idx) => statKeys.add(`${statKey}${idx}`));
@@ -24,12 +23,12 @@ export function generateReport(data) {
     const answerColumns = Array.from(answerKeys);
     const statColumns = Array.from(statKeys);
 
-    // Build header row
+    // Header
     const header = ['hash', ...answerColumns, ...statColumns];
 
-    // Build data rows
+    // Rows
     const rows = data.map(item => {
-        const answers = item.answers || {};
+        const answers = (item.answers && typeof item.answers === 'object') ? item.answers : {};
         const stats = item.stats || {};
         const flatStats = {};
 
@@ -37,21 +36,27 @@ export function generateReport(data) {
             const keyBase = col.replace(/\d+$/, '');
             const idx = parseInt(col.replace(keyBase, ''), 10);
             const value = stats[keyBase];
-            flatStats[col] = Array.isArray(value) ? value[idx] ?? '' : value ?? '';
+
+            flatStats[col] = Array.isArray(value)
+                ? (value[idx] ?? '')
+                : (value ?? '');
         });
 
         return [
             item.hash,
-            ...answerColumns.map(key => answers[key] ?? ''),
-            ...statColumns.map(key => flatStats[key] ?? '')
+            ...answerColumns.map(k => answers[k] ?? ''),
+            ...statColumns.map(k => flatStats[k] ?? '')
         ];
     });
 
-    const csvLines = [header.join(','), ...rows.map(row => row.map(escapeCsv).join(','))];
+    const csvLines = [
+        header.join(','),
+        ...rows.map(row => row.map(escapeCsv).join(','))
+    ];
+
     return csvLines.join('\n');
 }
 
-// Escape CSV values (commas, quotes, linebreaks)
 function escapeCsv(value) {
     if (value === null || value === undefined) return '';
     let str = String(value);
