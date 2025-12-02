@@ -50,6 +50,11 @@ const StudyAddRemove = () => {
                 });
 
                 console.log(`Study ${selectedStudy} sent to be removed.`);
+
+                if(res.ok) {
+                    alert(`Study ${formData.study} sent to be removed.`);
+                }
+
             } catch (err) {
                 console.error("remove_study failed:", err);
                 alert("Submission failed.");

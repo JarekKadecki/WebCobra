@@ -61,12 +61,6 @@ const StudyEdit = () => {
             updateOnSubmit={onSubmitEnclosure("configuration")}
             api="/api/get_configuration"
           />
-          <ApiButton
-            study={selectedStudy}
-            editionField={textAreaId}
-            updateOnSubmit={onSubmitEnclosure("questions")}
-            api="/api/get_questions"
-          />
           <br/>
           <label id="errorMessage">
           </label>
