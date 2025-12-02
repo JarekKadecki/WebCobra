@@ -16,6 +16,9 @@ sea-orm = { version = "1.1", features = ["sqlx-postgres", "runtime-actix-native-
 chrono = { version = "0.4", features = ["serde"] }
 migration = { path = "../migration" }
 sea-orm-migration = "1.1.19"
+argon2 = "0.5"
+password-hash = "0.5"
+
 
 [dependencies.uuid]
 version = "1.17.0"

@@ -3,6 +3,7 @@ use actix_web::{post, get, web, HttpResponse, Error};
 use actix_session::Session;
 use sea_orm::{ DatabaseConnection };
 use std::env;
+use argon2::{Argon2, PasswordHash, PasswordVerifier};
 
 use crate::models::login_request::LoginRequest;
 
@@ -13,9 +14,26 @@ pub async fn admin_login_get() -> Result<NamedFile, Error> {
     Ok(actix_files::NamedFile::open_async(front_build).await?)
 }
 
-async fn validate_credentials(db: web::Data<DatabaseConnection>, login: &str, password: &str) -> Result<bool, sea_orm::DbErr> {
-    Ok(true)
+
+pub async fn validate_credentials(
+    login: &str,
+    password: &str,
+) -> Result<bool, sea_orm::DbErr> {
+
+    let stored_hash = "$argon2id$v=19$m=4096,t=3,p=1$M0JTRGJlemk2cXBEUW8xTA$bqE4vby+VKVQ686dwbMx1A";
+
+    let parsed_hash = match PasswordHash::new(stored_hash) {
+        Ok(h) => h,
+        Err(_) => return Ok(false),
+    };
+
+    let argon2 = Argon2::default();
+
+    let is_valid = argon2.verify_password(password.as_bytes(), &parsed_hash).is_ok();
+
+    Ok(is_valid)
 }
+
 
 #[post("/api/admin/login")]
 async fn validate_admin_login(
@@ -27,7 +45,7 @@ async fn validate_admin_login(
     let password = &creds.password;
 
     // log::info!("Hello from validate.");
-    match validate_credentials(db, login, password).await {
+    match validate_credentials(login, password).await {
         Ok(true) => {
             session.insert("authenticated", true).unwrap_or_else(|e| {
                 eprintln!("Session insert error: {:?}", e);
@@ -38,11 +56,7 @@ async fn validate_admin_login(
             session.insert("login", login).unwrap_or_else(|e| {
                 eprintln!("Session insert error: {:?}", e);
             });
-            // log::info!("Inserting admin as role.");
             HttpResponse::Ok().finish()
-            // HttpResponse::Found()
-            //     .append_header(("Location", "/admin"))
-            //     .finish()
 
         }
         Ok(false) => {
