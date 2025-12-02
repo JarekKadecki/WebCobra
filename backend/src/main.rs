@@ -3,6 +3,8 @@ extern crate log;
 
 use actix_web::{cookie::Key, web, App, HttpServer};
 use actix_session::{SessionMiddleware, storage::CookieSessionStore};
+use migration::Migrator;
+use sea_orm_migration::migrator::MigratorTrait;
 use dotenvy::dotenv;
 use log::info;
 use sea_orm::Database;
@@ -21,10 +23,12 @@ async fn main() -> std::io::Result<()> {
     let host = env::var("HOST").expect("Host not set");
     let port = env::var("PORT").expect("Port not set");
     let key = Key::generate();
-    let db_str = env::var("DATABASE").expect("Database connection string not set");
+    let db_str = env::var("DATABASE_URL").expect("Database connection string not set");
     let db_conn = Database::connect(db_str)
         .await
         .expect("Could not connect to database");
+
+    Migrator::up(&db_conn, None).await.unwrap();
 
     info!("Hello from main.");
 
