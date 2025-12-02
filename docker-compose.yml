@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: "study_admin"
+      POSTGRES_PASSWORD: "db_password_here"
+      POSTGRES_DB: "study_db"
+    ports:
+      - "5433:5432"
+    volumes:
+      - study_db_data:/var/lib/postgresql/data
+
+  migrator:
+    build: .
+    entrypoint: ["/app/migrator"]
+    environment:
+      DATABASE_URL: "postgres://study_admin:db_password_here@db:5432/study_db"
+    depends_on:
+      - db
+
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      RUST_LOG: "rest_api=info,actix=info"
+      HOST: "0.0.0.0"
+      PORT: "8080"
+      FRONT_DIR: "/app/dist"
+      STATIC_DIR: "/app/dist/static"
+      DATABASE_URL: "postgres://study_admin:db_password_here@db:5432/study_db"
+    depends_on:
+      migrator:
+        condition: service_completed_successfully
+
+volumes:
+  study_db_data:
