@@ -9,13 +9,13 @@ const GenerateReport = () => {
         e.preventDefault();
 
         if (!selectedStudy) {
-                alert("Select a study to generate report.");
+            alert("Select a study to generate report.");
             return;
         }
 
         const formData = {
             study: selectedStudy
-        }
+        };
 
         const res = await fetch("/api/generate_report", {
             method: 'POST',
@@ -26,11 +26,14 @@ const GenerateReport = () => {
         console.log(`Generating report for ${selectedStudy}.`);
 
         if (res.ok) {
-
             const reportData = await res.json();
-            const fileContent = generateReport(reportData);
 
-            //insert data validation and processing
+            if (!Array.isArray(reportData) || reportData.length === 0) {
+                alert("No finished participations found for this study.");
+                return;
+            }
+
+            const fileContent = generateReport(reportData);
 
             const blob = new Blob([fileContent], { type: 'text/csv' });
             const url = URL.createObjectURL(blob);
@@ -41,20 +44,20 @@ const GenerateReport = () => {
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
-        } else if(!res.ok)
-        {
-            console.error("generate_report failed:", err);
-            alert("Submission failed.");
+        } else {
+            const text = await res.text();
+            console.error("generate_report failed:", text);
+            alert("Report generation failed: " + text);
         }
-    }
+    };
 
-  return (
-    <form onSubmit={handleSubmit}>
-        <label>Select study</label><br/>
-        <StudySelect selectCallback={selectStudy}></StudySelect><br/>
-        <button type="submit">Generate</button>
-    </form>
-  );
+    return (
+        <form onSubmit={handleSubmit}>
+            <label>Select study</label><br/>
+            <StudySelect selectCallback={selectStudy} /><br/>
+            <button type="submit">Generate</button>
+        </form>
+    );
 };
 
 export default GenerateReport;

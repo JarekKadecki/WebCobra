@@ -40,6 +40,7 @@ function App() {
     });
 
     alert("Study finished");
+    window.location.replace("validate");
   };
 
   return (

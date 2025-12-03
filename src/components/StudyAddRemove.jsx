@@ -43,7 +43,7 @@ const StudyAddRemove = () => {
             }
 
             try {
-                await fetch("/api/remove_study", {
+                const res = await fetch("/api/remove_study", {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData),

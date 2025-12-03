@@ -301,9 +301,6 @@ pub async fn handle_api(
                 return HttpResponse::BadRequest().body(e);
             }
 
-            // // Save entire payload into stats column
-            // active_model.stats = Set(Some(data.to_string()));
-
             if let Some(stats) = data.get("stats") {
                 active_model.stats = Set(Some(stats.to_string()));
             }
@@ -330,44 +327,57 @@ pub async fn handle_api(
                 return e.error_response();
             }
 
-            let study_name = data["study"].as_str().unwrap_or("").to_string();
+            // Validate input
+            let study_name = match data.get("study").and_then(|v| v.as_str()) {
+                Some(s) => s,
+                None => return HttpResponse::BadRequest().body("Missing field: study"),
+            };
 
+            // Fetch study
             let study = match studies::Entity::find()
                 .filter(studies::Column::Name.eq(study_name))
                 .one(db.get_ref())
                 .await
             {
                 Ok(Some(s)) => s,
-                _ => return HttpResponse::NotFound().body("Study not found."),
+                Ok(None) => return HttpResponse::NotFound().body("Study not found."),
+                Err(e) => {
+                    eprintln!("DB error: {:?}", e);
+                    return HttpResponse::InternalServerError().finish();
+                }
             };
 
-            // Only finished participations
-            let participations = participations::Entity::find()
+            // Fetch finished participations
+            let participations = match participations::Entity::find()
                 .filter(participations::Column::StudyId.eq(study.id))
                 .filter(participations::Column::Finished.eq(true))
                 .all(db.get_ref())
                 .await
-                .unwrap_or_default();
+            {
+                Ok(p) => p,
+                Err(e) => {
+                    eprintln!("DB error: {:?}", e);
+                    return HttpResponse::InternalServerError().finish();
+                }
+            };
 
             let result: Vec<Value> = participations
                 .into_iter()
                 .map(|p| {
-                    // Parse stats JSON string → Value
                     let stats = p
                         .stats
                         .as_ref()
-                        .and_then(|s| serde_json::from_str::<Value>(s).ok())
-                        .unwrap_or_else(|| json!({}));
+                        .map(|s| serde_json::from_str(s).unwrap_or(json!({})))
+                        .unwrap_or(json!({}));
 
-                    // Parse answers JSON string → Value
                     let answers = p
                         .answers
                         .as_ref()
-                        .and_then(|s| serde_json::from_str::<Value>(s).ok())
-                        .unwrap_or_else(|| json!({}));
+                        .map(|s| serde_json::from_str(s).unwrap_or(json!({})))
+                        .unwrap_or(json!({}));
 
                     json!({
-                        "hash": p.hash.unwrap_or_default(),
+                        "hash": p.hash, // keep nullable
                         "stats": stats,
                         "answers": answers
                     })
@@ -376,6 +386,7 @@ pub async fn handle_api(
 
             HttpResponse::Ok().json(result)
         }
+
 
         _ => HttpResponse::NotFound().body("Unknown action."),
     }

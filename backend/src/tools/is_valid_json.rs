@@ -33,7 +33,6 @@ pub fn validate_finish_game_data(data: &Value) -> Result<(), String> {
         return Err("stats must be an object".into());
     }
 
-    // required stats keys
     let required_stats = [
         "roundApplesSteal",
         "roundScore",
@@ -43,17 +42,16 @@ pub fn validate_finish_game_data(data: &Value) -> Result<(), String> {
     ];
 
     for key in required_stats {
-        if !stats.get(key).is_some() {
+        if stats.get(key).is_none() {
             return Err(format!("Missing stats field: {}", key));
         }
     }
 
-    // answers
     let answers = data.get("answers")
         .ok_or("Missing field: answers")?;
 
-    if !answers.is_object() {
-        return Err("answers must be an object".into());
+    if !answers.is_array() {
+        return Err("answers must be an array".into());
     }
 
     Ok(())
